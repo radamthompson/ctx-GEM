@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exploreEnergyBalance</title>
+  <meta name="keywords" content="exploreEnergyBalance">
+  <meta name="description" content="exploreEnergyBalance Exploring biomass degradation vs fermentation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>exploreEnergyBalance
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>exploreEnergyBalance Exploring biomass degradation vs fermentation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ landscape ] = exploreEnergyBalance( model, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">exploreEnergyBalance Exploring biomass degradation vs fermentation
+landscape
+   This function will perform the standard exploration into the energetic
+   landscape of C. thermocellum. The input model will be part of an
+   iterative parameter perturbation and the output structure will contain
+   a series of flux distributions describing alternative objective
+   functions
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Nov 19, 2015
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function newModel = setExploringReferenceParams(model)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ landscape ] = exploreEnergyBalance( model, varargin )</a>
+0002 <span class="comment">%exploreEnergyBalance Exploring biomass degradation vs fermentation</span>
+0003 <span class="comment">%landscape</span>
+0004 <span class="comment">%   This function will perform the standard exploration into the energetic</span>
+0005 <span class="comment">%   landscape of C. thermocellum. The input model will be part of an</span>
+0006 <span class="comment">%   iterative parameter perturbation and the output structure will contain</span>
+0007 <span class="comment">%   a series of flux distributions describing alternative objective</span>
+0008 <span class="comment">%   functions</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% R. Adam Thompson</span>
+0011 <span class="comment">% Trinh Lab</span>
+0012 <span class="comment">% University of Tennessee, Knoxville</span>
+0013 <span class="comment">% rthomp46@utk.edu</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Created: Nov 19, 2015</span>
+0016 <span class="comment">% Last edit:</span>
+0017 
+0018 <span class="comment">% Initialize</span>
+0019 model = <a href="#_sub1" class="code" title="subfunction newModel = setExploringReferenceParams(model)">setExploringReferenceParams</a>(model);
+0020 <span class="keyword">if</span> ~isempty(varargin)
+0021     mu = varargin{1};
+0022 <span class="keyword">else</span>
+0023     mu = 0.1;
+0024 <span class="keyword">end</span>
+0025 
+0026 <span class="comment">% Opt Growth</span>
+0027 model1=setParam(model,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m86'</span>,1);
+0028 landscape.mu = optimizeCbModel(model1,<span class="string">'max'</span>,0,false);
+0029 
+0030 <span class="comment">% Opt ethanol with set growth rate</span>
+0031 model2=setParam(model,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m86'</span>,mu);
+0032 model2=setParam(model2,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m86'</span>,mu);
+0033 model3=setParam(model2,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m51'</span>,1);
+0034 landscape.eth = optimizeCbModel(model3,<span class="string">'max'</span>,0,false);
+0035 
+0036 <span class="comment">% Opt ACE with set growth rate</span>
+0037 model8=setParam(model2,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m52'</span>,1);
+0038 landscape.ace = optimizeCbModel(model8,<span class="string">'max'</span>,0,false);
+0039 
+0040 <span class="comment">% Opt H2 with set growth rate</span>
+0041 model4=setParam(model2,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m55'</span>,1);
+0042 landscape.h2 = optimizeCbModel(model4,<span class="string">'max'</span>,0,false);
+0043 
+0044 <span class="comment">% Opt iBuOH with set growth rate</span>
+0045 model5=setParam(model2,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m109'</span>,1);
+0046 landscape.iboh = optimizeCbModel(model5,<span class="string">'max'</span>,0,false);
+0047 
+0048 <span class="comment">% Opt alcohols with set growth rate</span>
+0049 model6=setParam(model2,<span class="string">'obj'</span>,{<span class="string">'EXC_OUT_m51'</span>,<span class="string">'EXC_OUT_m109'</span>},[0.5,1]);
+0050 landscape.ols = optimizeCbModel(model6,<span class="string">'max'</span>,0,false);
+0051 
+0052 <span class="comment">% Opt all 3 with set growth rate</span>
+0053 model7=setParam(model2,<span class="string">'obj'</span>,{<span class="string">'EXC_OUT_m51'</span>,<span class="string">'EXC_OUT_m55'</span>,<span class="string">'EXC_OUT_m109'</span>},[0.5,0.25,1]);
+0054 landscape.all = optimizeCbModel(model7,<span class="string">'max'</span>,0,false);
+0055 
+0056 <span class="keyword">end</span>
+0057 
+0058 
+0059 
+0060 <a name="_sub1" href="#_subfunctions" class="code">function newModel = setExploringReferenceParams(model)</a>
+0061 
+0062 newModel = model;
+0063 
+0064 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,0); <span class="comment">%GluEq</span>
+0065 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,5); <span class="comment">%</span>
+0066 
+0067 <span class="comment">% Cellohexaose uptake</span>
+0068 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0069 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0070 <span class="comment">% Cellopentaose uptake</span>
+0071 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0072 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0073 <span class="comment">% Cellotetraose uptake</span>
+0074 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,1000);
+0075 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0076 <span class="comment">% Cellotriose uptake</span>
+0077 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0078 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0079 <span class="comment">% Cellobiose uptake</span>
+0080 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0081 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0082 
+0083 model=setParam(model,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m17'</span>,0); <span class="comment">%Ammonia</span>
+0084 model=setParam(model,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m17'</span>,1000); <span class="comment">%</span>
+0085 
+0086 model=setParam(model,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m21'</span>,0); <span class="comment">%Urea</span>
+0087 model=setParam(model,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m21'</span>,0); <span class="comment">%</span>
+0088 
+0089 model=setParam(model,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%H2S</span>
+0090 model=setParam(model,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%</span>
+0091 
+0092 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0); <span class="comment">%Ala</span>
+0093 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m32'</span>,0); <span class="comment">%Arg</span>
+0094 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m33'</span>,0); <span class="comment">%Asp</span>
+0095 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m34'</span>,0); <span class="comment">%Asn</span>
+0096 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,0); <span class="comment">%Cys</span>
+0097 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m36'</span>,0); <span class="comment">%Glu</span>
+0098 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m37'</span>,0); <span class="comment">%Gln</span>
+0099 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m38'</span>,0); <span class="comment">%Gly</span>
+0100 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m39'</span>,0); <span class="comment">%His</span>
+0101 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0); <span class="comment">%Iso</span>
+0102 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m41'</span>,0); <span class="comment">%Leu</span>
+0103 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m42'</span>,0); <span class="comment">%Lys</span>
+0104 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m43'</span>,0); <span class="comment">%Met</span>
+0105 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m44'</span>,0); <span class="comment">%Phe</span>
+0106 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m45'</span>,0); <span class="comment">%Pro</span>
+0107 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m46'</span>,0); <span class="comment">%Ser</span>
+0108 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m47'</span>,0); <span class="comment">%Thr</span>
+0109 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m48'</span>,0); <span class="comment">%Trp</span>
+0110 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m49'</span>,0); <span class="comment">%Tyr</span>
+0111 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0); <span class="comment">%Val</span>
+0112 
+0113 <span class="keyword">end</span>
+0114 
+0115</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

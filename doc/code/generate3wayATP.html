@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of generate3wayATP</title>
+  <meta name="keywords" content="generate3wayATP">
+  <meta name="description" content="generate3wayATP Compare ATP for cellulosome and biomass vs growth rate">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>generate3wayATP
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>generate3wayATP Compare ATP for cellulosome and biomass vs growth rate</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ x_array, MuSurface, AASurface ] = generate3wayATP( model, figName ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">generate3wayATP Compare ATP for cellulosome and biomass vs growth rate
+   This script will take a model and run a series of calculations designed
+   to compare the ATP requirements of biomass and the cellulosome on the
+   growth rate.
+    
+    If figName is not provided, a pdf of the plot will not be created
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 6, 2015
+ Last edit: Dec 14, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function AminoAcids = getAminoAcids(model, soln)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ x_array, MuSurface, AASurface ] = generate3wayATP( model, figName )</a>
+0002 <span class="comment">%generate3wayATP Compare ATP for cellulosome and biomass vs growth rate</span>
+0003 <span class="comment">%   This script will take a model and run a series of calculations designed</span>
+0004 <span class="comment">%   to compare the ATP requirements of biomass and the cellulosome on the</span>
+0005 <span class="comment">%   growth rate.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%    If figName is not provided, a pdf of the plot will not be created</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% R. Adam Thompson</span>
+0010 <span class="comment">% Trinh Lab</span>
+0011 <span class="comment">% University of Tennessee, Knoxville</span>
+0012 <span class="comment">% rthomp46@utk.edu</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Created: Aug 6, 2015</span>
+0015 <span class="comment">% Last edit: Dec 14, 2015</span>
+0016 
+0017 <span class="keyword">if</span> nargin &lt; 2
+0018     printFig = 0;
+0019 <span class="keyword">else</span>
+0020     printFig = 1;
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="comment">% Initialize loop</span>
+0024 GAMArray = [0:1:50];
+0025 CellArray = [50:1:100];
+0026 
+0027 SolnArray = cell(size(GAMArray));
+0028 FameArray = cell(size(GAMArray));
+0029 <span class="comment">%AaArray = cell(size(GAMArray));</span>
+0030 MuSurface = zeros(length(GAMArray),length(CellArray));
+0031 AASurface = zeros(length(GAMArray),length(CellArray));
+0032 
+0033 BIOidx = strcmp(model.rxns,<span class="string">'EXC_OUT_m86'</span>);
+0034 newModel=setParam(model,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m86'</span>,1);
+0035 
+0036 max_count = length(GAMArray)*length(CellArray);
+0037 x_array = zeros(length(model.rxns),max_count);
+0038 
+0039 count = 0;
+0040 <span class="comment">% Loop through ATP and Cellulosome arrays</span>
+0041 <span class="keyword">for</span> i = 1:length(GAMArray)
+0042     gam = GAMArray(i);
+0043     equation = sprintf(<span class="string">'%1.3f H2O + %1.3f ATP + Cell Dry Weight no GAM =&gt; %1.3f ADP + %1.3f Orthophosphate + Biomass'</span>,gam,gam,gam,gam);
+0044     equation = {equation};
+0045     newModel = changeRxns(newModel,<span class="string">'R_R_BIO'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0046     
+0047     <span class="keyword">for</span> j = 1:length(CellArray)
+0048         cel = CellArray(j);
+0049         equation = sprintf(<span class="string">'%1.3f H2O + %1.3f ATP + 0.4317 L-Glutamate + 0.6373 Glycine + 0.5581 L-Alanine + 0.441 L-Lysine + 0.5523 L-Aspartate + 0.2365 L-Arginine + 0.1871 L-Glutamine + 0.4942 L-Serine + 0.1469 L-Methionine + 0.1718 L-Tryptophan + 0.2851 L-Phenylalanine + 0.3235 L-Tyrosine + 0.0665 L-Cysteine + 0.5329 L-Leucine + 0.1099 L-Histidine + 0.4823 L-Proline + 0.5523 L-Asparagine + 0.506 L-Valine + 0.5572 L-Threonine + 0.4739 L-Isoleucine =&gt; %1.3f ADP + %1.3f Orthophosphate + Cellulosome term'</span>,cel,cel,cel,cel);
+0050         equation = {equation};
+0051         newModel = changeRxns(newModel,<span class="string">'R_R_Cellulosome'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0052         
+0053         <span class="keyword">try</span>
+0054             soln = solveLP(newModel,1);
+0055            <span class="comment">% soln =optimizeCbModel(newModel,'max',0,false);</span>
+0056             count = count + 1;
+0057         <span class="keyword">catch</span>
+0058             soln.stat = -1;
+0059             count = count + 1;
+0060             x_array(:,count) = zeros(length(model.rxns),1);
+0061         <span class="keyword">end</span>
+0062         <span class="keyword">if</span> soln.stat == -1
+0063             MuSurface(i,j) = 0;
+0064             AASurface(i,j) = 0;
+0065             x_array(:,count) = zeros(length(model.rxns),1);
+0066         <span class="keyword">else</span>
+0067             AaArray = <a href="#_sub1" class="code" title="subfunction AminoAcids = getAminoAcids(model, soln)">getAminoAcids</a>(newModel, soln);
+0068             x_array(:,count) = soln.x;
+0069             AminoAcids = sum(AaArray);
+0070             Mu = soln.x(BIOidx);
+0071             MuSurface(i,j) =Mu;
+0072             AASurface(i,j) =AminoAcids;
+0073             
+0074         <span class="keyword">end</span>
+0075     <span class="keyword">end</span>
+0076     a = 1;
+0077 <span class="keyword">end</span>
+0078 
+0079 figure
+0080 surf(CellArray,GAMArray,MuSurface)
+0081 
+0082 ylabel(<span class="string">'GAM ATP Req.'</span>);
+0083 xlabel(<span class="string">'Cellulosome ATP Req.'</span>);
+0084 zlabel(<span class="string">'Specific growth rate \mu (hr^{-1})'</span>);
+0085 ylim([0 50]);
+0086 xlim([50 100]);
+0087 zlim([0 0.5]);
+0088 set(gca,<span class="string">'Ydir'</span>,<span class="string">'reverse'</span>)
+0089 
+0090 a = findobj(gcf);
+0091 allaxes=findall(a,<span class="string">'Type'</span>,<span class="string">'axes'</span>);
+0092 alllines=findall(a,<span class="string">'Type'</span>,<span class="string">'line'</span>);
+0093 alltext=findall(a,<span class="string">'Type'</span>,<span class="string">'text'</span>);
+0094 
+0095 set(alltext,<span class="string">'fontSize'</span>,18);
+0096 set(allaxes,<span class="string">'linewidth'</span>,1,<span class="string">'fontsize'</span>,16);
+0097 set(alllines,<span class="string">'linewidth'</span>,1);
+0098 fp = fillPage(gcf, <span class="string">'margins'</span>, [0 0 0 0], <span class="string">'papersize'</span>, [8.5 8.5]);
+0099 
+0100 <span class="keyword">if</span> printFig == 1
+0101     print (gcf,<span class="string">'-dpdf'</span>,<span class="string">'-r300'</span>,figName);
+0102 <span class="keyword">end</span>
+0103 
+0104 <span class="keyword">end</span>
+0105 
+0106 
+0107 <a name="_sub1" href="#_subfunctions" class="code">function AminoAcids = getAminoAcids(model, soln)</a>
+0108 <span class="comment">%getAminoAcids Pull total amino acid flux for a LP solution</span>
+0109 
+0110 <span class="comment">%Initialize</span>
+0111 AaExRxns = {<span class="string">'EXC_BOTH_m31'</span>;<span class="string">'EXC_BOTH_m32'</span>;<span class="string">'EXC_BOTH_m33'</span>;<span class="string">'EXC_BOTH_m34'</span>;<span class="string">'EXC_BOTH_m35'</span>;<span class="string">'EXC_BOTH_m36'</span>;<span class="string">'EXC_BOTH_m37'</span>;<span class="string">'EXC_BOTH_m38'</span>;<span class="string">'EXC_BOTH_m39'</span>;<span class="string">'EXC_BOTH_m40'</span>;<span class="string">'EXC_BOTH_m41'</span>;<span class="string">'EXC_BOTH_m42'</span>;<span class="string">'EXC_BOTH_m43'</span>;<span class="string">'EXC_BOTH_m44'</span>;<span class="string">'EXC_BOTH_m45'</span>;<span class="string">'EXC_BOTH_m46'</span>;<span class="string">'EXC_BOTH_m47'</span>;<span class="string">'EXC_BOTH_m48'</span>;<span class="string">'EXC_BOTH_m49'</span>;<span class="string">'EXC_BOTH_m50'</span>};
+0112 rxnidx = ones(size(AaExRxns));
+0113 AminoAcids = zeros(size(AaExRxns));
+0114 
+0115 <span class="comment">% Get indicies</span>
+0116 <span class="keyword">for</span> i = 1:length(AaExRxns)
+0117     idx = find(strcmp(model.rxns,AaExRxns{i}));
+0118     rxnidx(i) = idx;
+0119 <span class="keyword">end</span>
+0120 
+0121 <span class="comment">% Get AA fluxes</span>
+0122 AminoAcids = soln.x(rxnidx);
+0123 
+0124 
+0125 
+0126 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

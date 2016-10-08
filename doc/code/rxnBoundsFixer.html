@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of rxnBoundsFixer</title>
+  <meta name="keywords" content="rxnBoundsFixer">
+  <meta name="description" content="rxnBoundsFixer Walk through two models, comparing reactions with different">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>rxnBoundsFixer
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>rxnBoundsFixer Walk through two models, comparing reactions with different</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ new_model1,link_struc ] = rxnBoundsFixer( model1,model2 ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">rxnBoundsFixer Walk through two models, comparing reactions with different
+thermodynamic constraints
+   This function takes 2 FBA models and finds common reactions between the
+   models based on E.C. numbers, compares the thermodynamic constraints
+   between the models, and allows the user to change reaction bounds
+   efficiently.
+
+   model1, model2 := FBA model, can be from COBRA or RAVEN
+
+   link_struc := MATLAB structure with various fields describing the
+   similarities and differences between the two models
+
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: February 26, 2015
+ Last edit: May 21, 2015
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="model2modelEC.html" class="code" title="function [ ec_struc ] = model2modelEC( model1,model2, printInfo )">model2modelEC</a>	model2modelEC Map two FBA (GEM) models to each other using E.C. codes</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ new_model1,link_struc ] = rxnBoundsFixer( model1,model2 )</a>
+0002 <span class="comment">%rxnBoundsFixer Walk through two models, comparing reactions with different</span>
+0003 <span class="comment">%thermodynamic constraints</span>
+0004 <span class="comment">%   This function takes 2 FBA models and finds common reactions between the</span>
+0005 <span class="comment">%   models based on E.C. numbers, compares the thermodynamic constraints</span>
+0006 <span class="comment">%   between the models, and allows the user to change reaction bounds</span>
+0007 <span class="comment">%   efficiently.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   model1, model2 := FBA model, can be from COBRA or RAVEN</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%   link_struc := MATLAB structure with various fields describing the</span>
+0012 <span class="comment">%   similarities and differences between the two models</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% R. Adam Thompson</span>
+0017 <span class="comment">% Trinh Lab</span>
+0018 <span class="comment">% University of Tennessee, Knoxville</span>
+0019 <span class="comment">% rthomp46@utk.edu</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Created: February 26, 2015</span>
+0022 <span class="comment">% Last edit: May 21, 2015</span>
+0023 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0024 
+0025 <span class="comment">% Get model reaction mapping</span>
+0026 link_struc = <a href="model2modelEC.html" class="code" title="function [ ec_struc ] = model2modelEC( model1,model2, printInfo )">model2modelEC</a>(model1,model2,0);
+0027 
+0028 <span class="comment">% Initialize</span>
+0029 rxns1 = model1.rxns;
+0030 rxns2 = model2.rxns;
+0031 new_model1 = model1;
+0032 
+0033 idx = find(link_struc.model1_link(:,1));
+0034 mb1 = link_struc.bounds1(idx,1:2);
+0035 mb2 = link_struc.bounds1(idx,3:4);
+0036 rxn1 = rxns1(idx);
+0037 rxn2 = link_struc.model1_link(idx);
+0038 rxn2 = rxns2(rxn2);
+0039 
+0040 <span class="comment">%</span>
+0041 <span class="keyword">for</span> i = 1:length(idx)
+0042     <span class="comment">% Print the reactions in each model</span>
+0043     rm1 = idx(i);
+0044     rm2 = link_struc.model1_link(rm1);
+0045     eq1=constructEquations(model1,rm1,false);
+0046     eq2=constructEquations(model2,rm2,false);
+0047     fprintf(<span class="string">'\n%9s%10s%8s%8s\n'</span>,<span class="string">'Model 1: '</span>,cell2mat(rxn1(i)),num2str(mb1(i,1)),num2str(mb1(i,2)))
+0048     fprintf(<span class="string">'%s\n'</span>,cell2mat(eq1))
+0049     fprintf(<span class="string">'\n%9s%10s%8s%8s\n'</span>,<span class="string">'Model 2: '</span>,cell2mat(rxn2(i)),num2str(mb2(i,1)),num2str(mb2(i,2)))
+0050     fprintf(<span class="string">'%s\n\n'</span>,cell2mat(eq2))
+0051     
+0052     chngBound = <span class="string">'Would you like to alter the reaction bounds? (Y/N)   '</span>;
+0053     result = input(chngBound,<span class="string">'s'</span>);
+0054     <span class="keyword">switch</span> result
+0055         <span class="keyword">case</span> {<span class="string">'Y'</span>,<span class="string">'y'</span>}
+0056             <span class="comment">% Request new bounds for model 1</span>
+0057             newUB = <span class="string">'Enter new upper bound for model 1:  '</span>;
+0058             UB = input(newUB);
+0059             <span class="keyword">if</span> ~isfloat(UB)
+0060                 fprintf(<span class="string">'Please enter an integer\n'</span>)
+0061                 UB = input(newUB);
+0062             <span class="keyword">end</span>
+0063             newLB = <span class="string">'Enter new lower bound for model 1:  '</span>;
+0064             LB = input(newLB);
+0065             <span class="keyword">if</span> ~isfloat(LB)
+0066                 fprintf(<span class="string">'Please enter an integer\n'</span>)
+0067                 LB = input(newLB);
+0068             <span class="keyword">end</span>
+0069             <span class="keyword">try</span>
+0070                 <span class="comment">% Call setParam</span>
+0071                 new_model1 = setParam(new_model1,<span class="string">'ub'</span>,rm1,UB);
+0072             <span class="keyword">catch</span>
+0073                 warning(<span class="string">'Upper bound is incorrect. Ending script'</span>)
+0074                 <span class="keyword">break</span>
+0075             <span class="keyword">end</span>
+0076             <span class="keyword">try</span>
+0077                 new_model1 = setParam(new_model1,<span class="string">'lb'</span>,rm1,LB);
+0078             <span class="keyword">catch</span>
+0079                 warning(<span class="string">'Lower bound is incorrect. Ending script'</span>)
+0080                 <span class="keyword">break</span>
+0081             <span class="keyword">end</span>
+0082             
+0083         <span class="keyword">otherwise</span>
+0084             fprintf(<span class="string">'Fair enough\n'</span>)
+0085     <span class="keyword">end</span>
+0086     bal = length(idx)-i;
+0087     fprintf(<span class="string">'Only %i reactions left to check \n'</span>,bal)
+0088 <span class="keyword">end</span>
+0089 
+0090 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

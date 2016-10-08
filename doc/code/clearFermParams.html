@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clearFermParams</title>
+  <meta name="keywords" content="clearFermParams">
+  <meta name="description" content="clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>clearFermParams
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = clearFermParams( model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.
+
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: July 24, 2015
+ Last edit: Aug 6, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="alterCellodextrins.html" class="code" title="function [ newModel, solnMatrix ] = alterCellodextrins( model, expt )">alterCellodextrins</a>	alterCellodextrins Walk through different cellodextrin sources and solveLP</li><li><a href="parParse.html" class="code" title="function soln_str = parParse(soln_str,excId)">parParse</a>	changeCobraSolver('gurobi5','milp')</li><li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = clearFermParams( model )</a>
+0002 <span class="comment">%clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% R. Adam Thompson</span>
+0007 <span class="comment">% Trinh Lab</span>
+0008 <span class="comment">% University of Tennessee, Knoxville</span>
+0009 <span class="comment">% rthomp46@utk.edu</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Created: July 24, 2015</span>
+0012 <span class="comment">% Last edit: Aug 6, 2015</span>
+0013 
+0014 newModel = model;
+0015 
+0016 
+0017 <span class="comment">% Cellohexaose uptake</span>
+0018 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,1000);
+0019 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0020 <span class="comment">% Cellopentaose uptake</span>
+0021 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,1000);
+0022 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0023 <span class="comment">% Cellotetraose uptake</span>
+0024 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,1000);
+0025 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0026 <span class="comment">% Cellotriose uptake</span>
+0027 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,1000);
+0028 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0029 <span class="comment">% Cellobiose uptake</span>
+0030 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,1000);
+0031 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0032 <span class="comment">% Glucose Eq uptake</span>
+0033 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,1000);
+0034 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,0);
+0035 
+0036 <span class="comment">% Ethanol Production</span>
+0037 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,1000);
+0038 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,0);
+0039 
+0040 <span class="comment">% Acetate</span>
+0041 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,1000);
+0042 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,0);
+0043 
+0044 <span class="comment">% CO2</span>
+0045 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m19'</span>,1000);
+0046 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m19'</span>,0);
+0047 
+0048 <span class="comment">% Hydrogen</span>
+0049 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m55'</span>,1000);
+0050 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m55'</span>,0);
+0051 
+0052 <span class="comment">% Formate</span>
+0053 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,1000);
+0054 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,0);
+0055 
+0056 <span class="comment">% Valine</span>
+0057 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m50'</span>,1000);
+0058 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0);
+0059 
+0060 <span class="comment">% Ile</span>
+0061 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m40'</span>,1000);
+0062 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0);
+0063 
+0064 <span class="comment">% Ala</span>
+0065 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m31'</span>,1000);
+0066 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0.0);
+0067 
+0068 <span class="comment">% Lactate</span>
+0069 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,1000);
+0070 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0);
+0071 
+0072 <span class="comment">% Isobutanol</span>
+0073 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m109'</span>,1000);
+0074 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m109'</span>,0);
+0075 
+0076 <span class="comment">% Fumarate</span>
+0077 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m110'</span>,1000);
+0078 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m110'</span>,0);
+0079 
+0080 <span class="comment">% Malate</span>
+0081 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m105'</span>,1000);
+0082 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m105'</span>,0);
+0083 
+0084 <span class="comment">% Meso-2,3 butanediol</span>
+0085 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m106'</span>,1000);
+0086 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m106'</span>,0);
+0087 
+0088 <span class="comment">% RR-2,3 butanediol</span>
+0089 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m107'</span>,1000);
+0090 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m107'</span>,0);
+0091 
+0092 <span class="comment">% Pyroglutamate</span>
+0093 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m108'</span>,1000);
+0094 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m108'</span>,0);
+0095 
+0096 <span class="comment">% Pyruvate</span>
+0097 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m56'</span>,1000);
+0098 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m56'</span>,0);
+0099 
+0100 <span class="comment">% Xylitol</span>
+0101 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m109'</span>,1000);
+0102 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m109'</span>,0);
+0103 
+0104 <span class="comment">% Nitrogen</span>
+0105 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m17'</span>,5); <span class="comment">%NH3</span>
+0106 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m21'</span>,5);  <span class="comment">% Urea</span>
+0107 
+0108 <span class="keyword">end</span>
+0109</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

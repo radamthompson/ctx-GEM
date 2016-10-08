@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of varyATPreq</title>
+  <meta name="keywords" content="varyATPreq">
+  <meta name="description" content="varyATPreq Setup loop to fit ATP GAM/ cellulosome requirement">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>varyATPreq
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>varyATPreq Setup loop to fit ATP GAM/ cellulosome requirement</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel, plottable, GAM_solns ] = varyATPreq( model, c_source, term ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">varyATPreq Setup loop to fit ATP GAM/ cellulosome requirement
+   This script is designed to take a C. therm. GEM structure and
+   incrementally change the ATP requirement while returning the solutions
+   as well as a plottable array. The goal is to set experimental
+   constraints and then find GAM by fitting the growth rate
+
+   c_source := 'cb' for cellobiose, 'ce' for cellulose   **Run
+   setCarbonSource prior to this script
+
+   term := specify which ATP requirement to increment. 'GAM' for growth
+   associated maintenance, 'cellulosome' otherwise
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 6, 2015
+ Last edit: Dec 14,2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel, plottable, GAM_solns ] = varyATPreq( model, c_source, term )</a>
+0002 <span class="comment">%varyATPreq Setup loop to fit ATP GAM/ cellulosome requirement</span>
+0003 <span class="comment">%   This script is designed to take a C. therm. GEM structure and</span>
+0004 <span class="comment">%   incrementally change the ATP requirement while returning the solutions</span>
+0005 <span class="comment">%   as well as a plottable array. The goal is to set experimental</span>
+0006 <span class="comment">%   constraints and then find GAM by fitting the growth rate</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   c_source := 'cb' for cellobiose, 'ce' for cellulose   **Run</span>
+0009 <span class="comment">%   setCarbonSource prior to this script</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%   term := specify which ATP requirement to increment. 'GAM' for growth</span>
+0012 <span class="comment">%   associated maintenance, 'cellulosome' otherwise</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% R. Adam Thompson</span>
+0016 <span class="comment">% Trinh Lab</span>
+0017 <span class="comment">% University of Tennessee, Knoxville</span>
+0018 <span class="comment">% rthomp46@utk.edu</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Created: Aug 6, 2015</span>
+0021 <span class="comment">% Last edit: Dec 14,2015</span>
+0022 
+0023 <span class="comment">% Initialize</span>
+0024 newModel = model;
+0025 GAM_array = [0:0.5:50];
+0026 GAM_solns = cell(size(GAM_array));
+0027 plottable = ones(length(GAM_array),2);
+0028 
+0029 <span class="comment">% Set cellulosome fraction on carbon source (see Zhang et Lynd, J Bact 2005)</span>
+0030 <span class="keyword">switch</span> c_source
+0031     <span class="keyword">case</span> <span class="string">'cb'</span>
+0032         equation = sprintf( <span class="string">'%1.3f Protein + 0.026 DNA + 0.0655 RNA + 0.076 Lipid + 0.2242 Cell Wall + 0.00494 Solute Pool + 0.0304 Total_LTA + %1.4f Cellulosome term =&gt; Cell Dry Weight no GAM'</span>,0.5285, 0.02);
+0033     <span class="keyword">case</span> <span class="string">'ce'</span>
+0034         equation = sprintf( <span class="string">'%1.3f Protein + 0.026 DNA + 0.0655 RNA + 0.076 Lipid + 0.2242 Cell Wall + 0.00494 Solute Pool + 0.0304 Total_LTA + %1.4f Cellulosome term =&gt; Cell Dry Weight no GAM'</span>,0.5285, 0.2);
+0035 <span class="keyword">end</span>
+0036 equation = {equation};
+0037 newModel = changeRxns(newModel,<span class="string">'R_R_DCW'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0038 
+0039 
+0040 <span class="keyword">switch</span> term
+0041     <span class="keyword">case</span> <span class="string">'GAM'</span>
+0042         
+0043         <span class="keyword">for</span> i = 1:length(GAM_array)
+0044             gam = GAM_array(i);
+0045             equation = sprintf(<span class="string">'%1.3f H2O + %1.3f ATP + Cell Dry Weight no GAM =&gt; %1.3f ADP + %1.3f Orthophosphate + Biomass'</span>,gam,gam,gam,gam);
+0046             equation = {equation};
+0047             newModel = changeRxns(newModel,<span class="string">'R_R_BIO'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0048             GAM_solns{i} = solveLP(newModel);
+0049             plottable(i,:) = [gam -GAM_solns{i}.f];
+0050         <span class="keyword">end</span>
+0051         
+0052     <span class="keyword">case</span> <span class="string">'cellulosome'</span>
+0053         <span class="keyword">for</span> i = 1:length(GAM_array)
+0054             gam = GAM_array(i);
+0055             equation = sprintf(<span class="string">'%1.3f H2O + %1.3f ATP + 0.4317 L-Glutamate + 0.6373 Glycine + 0.5581 L-Alanine + 0.441 L-Lysine + 0.5523 L-Aspartate + 0.2365 L-Arginine + 0.1871 L-Glutamine + 0.4942 L-Serine + 0.1469 L-Methionine + 0.1718 L-Tryptophan + 0.2851 L-Phenylalanine + 0.3235 L-Tyrosine + 0.0665 L-Cysteine + 0.5329 L-Leucine + 0.1099 L-Histidine + 0.4823 L-Proline + 0.5523 L-Asparagine + 0.506 L-Valine + 0.5572 L-Threonine + 0.4739 L-Isoleucine =&gt; %1.3f ADP + %1.3f Orthophosphate + Cellulosome term'</span>,40+gam,40+gam,40+gam,40+gam);
+0056             equation = {equation};
+0057             newModel = changeRxns(newModel,<span class="string">'R_R_Cellulosome'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0058             GAM_solns{i} = solveLP(newModel);
+0059             plottable(i,:) = [gam -GAM_solns{i}.f];
+0060         <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="keyword">end</span>
+0064</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

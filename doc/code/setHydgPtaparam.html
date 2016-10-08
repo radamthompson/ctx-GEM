@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setHydgPtaparam</title>
+  <meta name="keywords" content="setHydgPtaparam">
+  <meta name="description" content="setHydGparam Take a model and apply HydG Pta constraints">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setHydgPtaparam
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setHydGparam Take a model and apply HydG Pta constraints</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setHydgPtaparam( model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setHydGparam Take a model and apply HydG Pta constraints
+   Experimental data constraints using HydG Pta strain
+
+   
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: July 24, 2015
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setHydgPtaparam( model )</a>
+0002 <span class="comment">%setHydGparam Take a model and apply HydG Pta constraints</span>
+0003 <span class="comment">%   Experimental data constraints using HydG Pta strain</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% R. Adam Thompson</span>
+0008 <span class="comment">% Trinh Lab</span>
+0009 <span class="comment">% University of Tennessee, Knoxville</span>
+0010 <span class="comment">% rthomp46@utk.edu</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Created: July 24, 2015</span>
+0013 <span class="comment">% Last edit:</span>
+0014 
+0015 newModel = model;
+0016 
+0017 <span class="comment">% KO HydG Reactions</span>
+0018 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'R_R07181_c'</span>,0); <span class="comment">%OPM7r, Fe-H2</span>
+0019 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'R_R07181_c'</span>,0);
+0020 
+0021 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'R_R09508_c'</span>,0); <span class="comment">%OPM8r, BIF</span>
+0022 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'R_R09508_c'</span>,0);
+0023 
+0024 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'R_R00230_c'</span>,0); <span class="comment">%PTA</span>
+0025 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'R_R00230_c'</span>,0);
+0026 
+0027 <span class="comment">% Set Experimental Ranges</span>
+0028 <span class="comment">% CB uptake</span>
+0029 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,2.424); 
+0030 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,2.424);
+0031 
+0032 <span class="comment">% Ethanol Production</span>
+0033 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,4.8991); 
+0034 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,4.4071);
+0035 
+0036 <span class="comment">% Acetate</span>
+0037 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,0.7445); 
+0038 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,0);
+0039 
+0040 <span class="comment">% CO2</span>
+0041 <span class="comment">% newModel=setParam(newModel,'ub','EXC_BOTH_m19',5.2593);</span>
+0042 <span class="comment">% newModel=setParam(newModel,'lb','EXC_BOTH_m19',4.3660);</span>
+0043 
+0044 <span class="comment">% Hydrogen</span>
+0045 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m55'</span>,4.0090); 
+0046 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m55'</span>,2.3287);
+0047 
+0048 <span class="comment">% Formate</span>
+0049 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,0.7949); 
+0050 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,0.6841);
+0051 
+0052 <span class="comment">% Valine</span>
+0053 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m50'</span>,0.6209); 
+0054 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0.4796);
+0055 
+0056 <span class="comment">% Lactate</span>
+0057 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,0.0513); 
+0058 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0);
+0059 
+0060 <span class="comment">% Ala</span>
+0061 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m31'</span>,0.0510); 
+0062 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0.0490);
+0063 
+0064 <span class="comment">% Ile</span>
+0065 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m40'</span>,0.0716); 
+0066 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0.0143);
+0067 
+0068 
+0069 <span class="keyword">end</span>
+0070</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

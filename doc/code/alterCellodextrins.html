@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of alterCellodextrins</title>
+  <meta name="keywords" content="alterCellodextrins">
+  <meta name="description" content="alterCellodextrins Walk through different cellodextrin sources and solveLP">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>alterCellodextrins
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>alterCellodextrins Walk through different cellodextrin sources and solveLP</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel, solnMatrix ] = alterCellodextrins( model, expt ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">alterCellodextrins Walk through different cellodextrin sources and solveLP
+   This function walks through constraining only
+
+   model := RAVEN model
+   expt := Experimental conditions
+                    For Carbon source 'ce':
+            'low_lc'         5 g/L avicel in LC media (Data from Evert Holwerda)
+            'low_mtc'      5 g/L avicel in MTC media (Data from Evert Holwerda)
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 12, 2015
+ Last edit: Feb 8, 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="changeCellodextrin.html" class="code" title="function newModel = changeCellodextrin(model, cd)">changeCellodextrin</a>	changeCellodextrin alter primary cellodextrin utilized</li><li><a href="clearFermParams.html" class="code" title="function [ newModel ] = clearFermParams( model )">clearFermParams</a>	clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.</li><li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel, solnMatrix ] = alterCellodextrins( model, expt )</a>
+0002 <span class="comment">%alterCellodextrins Walk through different cellodextrin sources and solveLP</span>
+0003 <span class="comment">%   This function walks through constraining only</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   model := RAVEN model</span>
+0006 <span class="comment">%   expt := Experimental conditions</span>
+0007 <span class="comment">%                    For Carbon source 'ce':</span>
+0008 <span class="comment">%            'low_lc'         5 g/L avicel in LC media (Data from Evert Holwerda)</span>
+0009 <span class="comment">%            'low_mtc'      5 g/L avicel in MTC media (Data from Evert Holwerda)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% R. Adam Thompson</span>
+0013 <span class="comment">% Trinh Lab</span>
+0014 <span class="comment">% University of Tennessee, Knoxville</span>
+0015 <span class="comment">% rthomp46@utk.edu</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Created: Aug 12, 2015</span>
+0018 <span class="comment">% Last edit: Feb 8, 2016</span>
+0019 
+0020 newModel = <a href="clearFermParams.html" class="code" title="function [ newModel ] = clearFermParams( model )">clearFermParams</a>(model);
+0021 newModel = <a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>(newModel,<span class="string">'ce'</span>,expt);
+0022 
+0023 cdArray = {<span class="string">'G6'</span>,<span class="string">'G5'</span>,<span class="string">'G4'</span>,<span class="string">'G3'</span>,<span class="string">'G2'</span>,<span class="string">'G1'</span>};
+0024 
+0025 solnMatrix = zeros(length(newModel.rxns),length(cdArray));
+0026 
+0027 <span class="keyword">for</span> i = 1:length(cdArray)
+0028     
+0029     newModel = <a href="changeCellodextrin.html" class="code" title="function newModel = changeCellodextrin(model, cd)">changeCellodextrin</a>(newModel, cdArray{i});
+0030     <span class="comment">%soln = optimizeCbModel(newModel,'max',0,false);</span>
+0031     soln = solveLP(newModel,1);
+0032     solnMatrix(:,i) = soln.x;
+0033     
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">end</span>
+0037 
+0038 
+0039</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

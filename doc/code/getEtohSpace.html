@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getEtohSpace</title>
+  <meta name="keywords" content="getEtohSpace">
+  <meta name="description" content="getEtohSpace Find ethanol vs mu phenotypic space">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>getEtohSpace
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>getEtohSpace Find ethanol vs mu phenotypic space</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ NewModel, SolnArray, FameArray, PhenSpace ] = getEtohSpace( model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">getEtohSpace Find ethanol vs mu phenotypic space
+
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: July 24, 2015
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function NewModel = resetFermParams(model)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ NewModel, SolnArray, FameArray, PhenSpace ] = getEtohSpace( model )</a>
+0002 <span class="comment">%getEtohSpace Find ethanol vs mu phenotypic space</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% R. Adam Thompson</span>
+0007 <span class="comment">% Trinh Lab</span>
+0008 <span class="comment">% University of Tennessee, Knoxville</span>
+0009 <span class="comment">% rthomp46@utk.edu</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Created: July 24, 2015</span>
+0012 <span class="comment">% Last edit:</span>
+0013 
+0014 <span class="comment">% if statement for printing</span>
+0015 
+0016 NewModel = <a href="#_sub1" class="code" title="subfunction NewModel = resetFermParams(model)">resetFermParams</a>(model);
+0017 
+0018 <span class="comment">% Set ETOH param and as obj.</span>
+0019 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,1000);
+0020 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,0);
+0021 NewModel=setParam(NewModel,<span class="string">'obj'</span>,<span class="string">'EXC_OUT_m51'</span>,1);
+0022 
+0023 <span class="comment">% Initialize loop</span>
+0024 mus = [0:0.005:0.4];
+0025 SolnArray = cell(size(mus));
+0026 FameArray = cell(size(mus));
+0027 
+0028 <span class="comment">% Loop through growth rates and get max ethanol</span>
+0029 <span class="keyword">for</span> i = 1:length(mus)
+0030     NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'R_R_BIO'</span>,mus(i));
+0031     NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'R_R_BIO'</span>,mus(i));
+0032     <span class="keyword">try</span>
+0033         [SolnArray{i}, FameArray{i}]=solveLPthenPrint(NewModel);
+0034     <span class="keyword">catch</span>
+0035         <span class="keyword">break</span>;
+0036         <span class="comment">%fprintf('%i \n', i);</span>
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="comment">% Print PhenSpace</span>
+0041 PhenSpace = [];
+0042 <span class="keyword">for</span> i = 1:length(mus)
+0043     <span class="keyword">if</span> cellfun(@isempty,SolnArray(1,i))
+0044         <span class="keyword">break</span>;
+0045     <span class="keyword">else</span>
+0046         CB = SolnArray{1,i}.x(787);
+0047         ET = SolnArray{1,i}.x(798);
+0048         CB = CB*12;
+0049         ET = ET*2;
+0050         B = SolnArray{1,i}.x(805);
+0051         point = [ET/CB B];
+0052         PhenSpace(i,:) =  point;
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span>
+0055 
+0056 
+0057 <span class="keyword">end</span>
+0058 
+0059 <a name="_sub1" href="#_subfunctions" class="code">function NewModel = resetFermParams(model)</a>
+0060 
+0061 NewModel = model;
+0062 
+0063 <span class="comment">% CB uptake</span>
+0064 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,3.5);
+0065 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0066 
+0067 <span class="comment">% Acetate</span>
+0068 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,1000);
+0069 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,0);
+0070 
+0071 <span class="comment">% CO2</span>
+0072 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m19'</span>,1000);
+0073 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m19'</span>,0);
+0074 
+0075 <span class="comment">% Hydrogen</span>
+0076 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m55'</span>,1000);
+0077 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m55'</span>,0);
+0078 
+0079 <span class="comment">% Formate</span>
+0080 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,1000);
+0081 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,0);
+0082 
+0083 <span class="comment">% Valine</span>
+0084 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m50'</span>,1000);
+0085 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0);
+0086 
+0087 <span class="comment">% Lactate</span>
+0088 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,1000);
+0089 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0);
+0090 
+0091 <span class="comment">% Ala</span>
+0092 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m31'</span>,1000);
+0093 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0);
+0094 
+0095 <span class="comment">% Ile</span>
+0096 NewModel=setParam(NewModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m40'</span>,1000);
+0097 NewModel=setParam(NewModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0);
+0098 
+0099 
+0100 <span class="keyword">end</span>
+0101</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

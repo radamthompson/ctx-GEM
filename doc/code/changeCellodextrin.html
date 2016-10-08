@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of changeCellodextrin</title>
+  <meta name="keywords" content="changeCellodextrin">
+  <meta name="description" content="changeCellodextrin alter primary cellodextrin utilized">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>changeCellodextrin
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>changeCellodextrin alter primary cellodextrin utilized</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function newModel = changeCellodextrin(model, cd) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">changeCellodextrin alter primary cellodextrin utilized
+   This function is used by alterCellodextrins
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 12, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="alterCellodextrins.html" class="code" title="function [ newModel, solnMatrix ] = alterCellodextrins( model, expt )">alterCellodextrins</a>	alterCellodextrins Walk through different cellodextrin sources and solveLP</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function newModel = changeCellodextrin(model, cd)</a>
+0002 <span class="comment">%changeCellodextrin alter primary cellodextrin utilized</span>
+0003 <span class="comment">%   This function is used by alterCellodextrins</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% R. Adam Thompson</span>
+0006 <span class="comment">% Trinh Lab</span>
+0007 <span class="comment">% University of Tennessee, Knoxville</span>
+0008 <span class="comment">% rthomp46@utk.edu</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Created: Aug 12, 2015</span>
+0011 newModel = model;
+0012 
+0013 <span class="keyword">switch</span> cd
+0014     
+0015     <span class="keyword">case</span> <span class="string">'G6'</span>
+0016         
+0017         <span class="comment">% Cellohexaose uptake</span>
+0018         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,1000);
+0019         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0020         <span class="comment">% Cellopentaose uptake</span>
+0021         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0022         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0023         <span class="comment">% Cellotetraose uptake</span>
+0024         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0025         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0026         <span class="comment">% Cellotriose uptake</span>
+0027         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0028         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0029         <span class="comment">% Cellobiose uptake</span>
+0030         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0031         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0032         <span class="comment">% Glucose uptake</span>
+0033         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0034         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0035         
+0036     <span class="keyword">case</span> <span class="string">'G5'</span>
+0037         
+0038         <span class="comment">% Cellohexaose uptake</span>
+0039         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0040         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0041         <span class="comment">% Cellopentaose uptake</span>
+0042         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,1000);
+0043         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0044         <span class="comment">% Cellotetraose uptake</span>
+0045         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0046         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0047         <span class="comment">% Cellotriose uptake</span>
+0048         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0049         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0050         <span class="comment">% Cellobiose uptake</span>
+0051         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0052         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0053         <span class="comment">% Glucose uptake</span>
+0054         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0055         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0056         
+0057         
+0058     <span class="keyword">case</span> <span class="string">'G4'</span>
+0059         
+0060         <span class="comment">% Cellohexaose uptake</span>
+0061         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0062         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0063         <span class="comment">% Cellopentaose uptake</span>
+0064         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0065         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0066         <span class="comment">% Cellotetraose uptake</span>
+0067         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,1000);
+0068         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0069         <span class="comment">% Cellotriose uptake</span>
+0070         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0071         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0072         <span class="comment">% Cellobiose uptake</span>
+0073         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0074         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0075         <span class="comment">% Glucose uptake</span>
+0076         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0077         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0078         
+0079     <span class="keyword">case</span> <span class="string">'G3'</span>
+0080         
+0081         <span class="comment">% Cellohexaose uptake</span>
+0082         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0083         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0084         <span class="comment">% Cellopentaose uptake</span>
+0085         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0086         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0087         <span class="comment">% Cellotetraose uptake</span>
+0088         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0089         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0090         <span class="comment">% Cellotriose uptake</span>
+0091         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,1000);
+0092         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0093         <span class="comment">% Cellobiose uptake</span>
+0094         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0095         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0096         <span class="comment">% Glucose uptake</span>
+0097         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0098         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0099         
+0100     <span class="keyword">case</span> <span class="string">'G2'</span>
+0101         
+0102         <span class="comment">% Cellohexaose uptake</span>
+0103         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0104         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0105         <span class="comment">% Cellopentaose uptake</span>
+0106         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0107         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0108         <span class="comment">% Cellotetraose uptake</span>
+0109         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0110         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0111         <span class="comment">% Cellotriose uptake</span>
+0112         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0113         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0114         <span class="comment">% Cellobiose uptake</span>
+0115         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,1000);
+0116         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0117         <span class="comment">% Glucose uptake</span>
+0118         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0119         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0120         
+0121     <span class="keyword">case</span> <span class="string">'G1'</span>
+0122         
+0123         <span class="comment">% Cellohexaose uptake</span>
+0124         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0125         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0126         <span class="comment">% Cellopentaose uptake</span>
+0127         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0128         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0129         <span class="comment">% Cellotetraose uptake</span>
+0130         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0131         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0132         <span class="comment">% Cellotriose uptake</span>
+0133         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0134         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0135         <span class="comment">% Cellobiose uptake</span>
+0136         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0137         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0138         <span class="comment">% Glucose uptake</span>
+0139         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m114'</span>,1000);
+0140         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m114'</span>,0);
+0141         
+0142 <span class="keyword">end</span>
+0143 
+0144 <span class="keyword">end</span>
+0145 
+0146</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

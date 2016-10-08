@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of removeSamplingLoops</title>
+  <meta name="keywords" content="removeSamplingLoops">
+  <meta name="description" content="removeSamplingLoops Removes sampling loops">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>removeSamplingLoops
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>removeSamplingLoops Removes sampling loops</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ model ] = removeSamplingLoops( model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">removeSamplingLoops Removes sampling loops
+   Detailed explanation goes here
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ model ] = removeSamplingLoops( model )</a>
+0002 <span class="comment">%removeSamplingLoops Removes sampling loops</span>
+0003 <span class="comment">%   Detailed explanation goes here</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% R. Adam Thompson</span>
+0007 <span class="comment">% Trinh Lab</span>
+0008 <span class="comment">% University of Tennessee, Knoxville</span>
+0009 <span class="comment">% rthomp46@utk.edu</span>
+0010 <span class="comment">%</span>
+0011 
+0012 points = model.points;
+0013 [m,n] = size(points);
+0014 
+0015 excId = [832:1:837,839:840,843:1:849,851:1:872]';
+0016 
+0017 newpoints = zeros(size(points));
+0018 infeas = [];
+0019 
+0020 <span class="keyword">for</span> j = 1:n
+0021     newModel = model;
+0022     fluxes = points(excId, j);
+0023     idx = [];
+0024     <span class="keyword">for</span> k = 1:length(fluxes)
+0025         <span class="keyword">if</span> fluxes(k) &lt; 1e-4
+0026             idx = [idx k];
+0027         <span class="keyword">end</span>
+0028     <span class="keyword">end</span>
+0029     <span class="keyword">for</span> f = 1:length(fluxes)
+0030         <span class="keyword">if</span> any(idx==f)
+0031             <span class="keyword">continue</span>
+0032         <span class="keyword">elseif</span> fluxes(f) &lt; 0
+0033             newModel = setParam(newModel,<span class="string">'ub'</span>,excId(f),fluxes(f)*0.95);
+0034             newModel = setParam(newModel,<span class="string">'lb'</span>,excId(f),fluxes(f)*1.05);
+0035         <span class="keyword">else</span>
+0036             newModel = setParam(newModel,<span class="string">'lb'</span>,excId(f),fluxes(f)*0.95);
+0037             newModel = setParam(newModel,<span class="string">'ub'</span>,excId(f),fluxes(f)*1.05);
+0038         <span class="keyword">end</span>
+0039     <span class="keyword">end</span>
+0040     soln = solveLP(newModel,1);
+0041     <span class="keyword">try</span>
+0042         newpoints(:,j) = soln.x;
+0043     <span class="keyword">catch</span>
+0044        infeas = [infeas,j];
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">end</span>
+0047 
+0048 model.newpoints = newpoints;
+0049 model.infeas = infeas;
+0050 
+0051 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

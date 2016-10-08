@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setCarbonSource</title>
+  <meta name="keywords" content="setCarbonSource">
+  <meta name="description" content="setCarbonSource Set cellulose or cellobiose for C therm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setCarbonSource
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setCarbonSource Set cellulose or cellobiose for C therm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setCarbonSource( model, c_source ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setCarbonSource Set cellulose or cellobiose for C therm
+   This script takes a C therm GEM and sets either cellobiose or cellulose
+   for a carbon source. This script works for version 10.11 onwards with
+   an active cellulosome reaction
+
+   model := RAVEN model
+   c_source := string, 'cb' for cellobiose, 'ce' for cellulose
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 3, 2015
+ Last edit: Dec 14, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setCarbonSource( model, c_source )</a>
+0002 <span class="comment">%setCarbonSource Set cellulose or cellobiose for C therm</span>
+0003 <span class="comment">%   This script takes a C therm GEM and sets either cellobiose or cellulose</span>
+0004 <span class="comment">%   for a carbon source. This script works for version 10.11 onwards with</span>
+0005 <span class="comment">%   an active cellulosome reaction</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   model := RAVEN model</span>
+0008 <span class="comment">%   c_source := string, 'cb' for cellobiose, 'ce' for cellulose</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% R. Adam Thompson</span>
+0011 <span class="comment">% Trinh Lab</span>
+0012 <span class="comment">% University of Tennessee, Knoxville</span>
+0013 <span class="comment">% rthomp46@utk.edu</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Created: Aug 3, 2015</span>
+0016 <span class="comment">% Last edit: Dec 14, 2015</span>
+0017 
+0018 newModel = model;
+0019 
+0020 <span class="keyword">switch</span> c_source
+0021     <span class="keyword">case</span> <span class="string">'cb'</span>
+0022         <span class="comment">% Glucose equivalents uptake</span>
+0023         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,1000);
+0024         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,0);
+0025         <span class="comment">% Cellohexaose uptake</span>
+0026         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0027         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0028         <span class="comment">% Cellopentaose uptake</span>
+0029         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0030         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0031         <span class="comment">% Cellotetraose uptake</span>
+0032         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0033         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0034         <span class="comment">% Cellotriose uptake</span>
+0035         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0036         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0037         <span class="comment">% Cellobiose uptake, WT range</span>
+0038         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,3.7443);
+0039         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,3.4158);
+0040         
+0041         equation = {<span class="string">'0.5285 Protein + 0.026 DNA + 0.0655 RNA + 0.076 Lipid + 0.2242 Cell Wall + 0.00494 Solute Pool + 0.0304 Total_LTA + 0.02 Cellulosome term =&gt; Cell Dry Weight no GAM'</span>};
+0042         newModel = changeRxns(newModel,<span class="string">'R_R_DCW'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0043         
+0044     <span class="keyword">case</span> <span class="string">'ce'</span>
+0045         <span class="comment">% Glucose equivalents uptake, from high substrate loading paper</span>
+0046         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,5.5);
+0047         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,5.0);
+0048         <span class="comment">% Cellohexaose uptake</span>
+0049         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,1000);
+0050         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0051         <span class="comment">% Cellopentaose uptake</span>
+0052         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,1000);
+0053         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0054         <span class="comment">% Cellotetraose uptake</span>
+0055         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,1000);
+0056         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0057         <span class="comment">% Cellotriose uptake</span>
+0058         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,1000);
+0059         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0060         <span class="comment">% Cellobiose uptake, WT range</span>
+0061         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,1000);
+0062         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0063         
+0064         equation = {<span class="string">'0.5285 Protein + 0.026 DNA + 0.0655 RNA + 0.076 Lipid + 0.2242 Cell Wall + 0.00494 Solute Pool + 0.0304 Total_LTA + 0.2 Cellulosome term =&gt; Cell Dry Weight no GAM'</span>};
+0065         newModel = changeRxns(newModel,<span class="string">'R_R_DCW'</span>,equation,2,<span class="string">'C_c'</span>,false);
+0066 <span class="keyword">end</span>
+0067 
+0068 
+0069 
+0070 
+0071 
+0072 
+0073 <span class="keyword">end</span>
+0074</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

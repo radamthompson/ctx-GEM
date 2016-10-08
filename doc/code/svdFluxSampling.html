@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of svdFluxSampling</title>
+  <meta name="keywords" content="svdFluxSampling">
+  <meta name="description" content="svdFluxEnsemble Perform SVD on flux ensemble">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>svdFluxSampling
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>svdFluxEnsemble Perform SVD on flux ensemble</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ SVDstats ] = svdFluxSampling( vs, s_ind, scree_plot ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">svdFluxEnsemble Perform SVD on flux ensemble
+   This function will take a flux ensemble structure and perform 
+   the SVD decomposition of the flux ensemble.
+
+   samples := RAVEN model post optGpSampler w/ loops removed
+   s_ind := substrate index
+    scree_plot := Boolean value, true if you want a Scree plot
+
+   Output:
+   SVDstats := Structure with SVD stats
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: August 8, 2016 
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ SVDstats ] = svdFluxSampling( vs, s_ind, scree_plot )</a>
+0002 <span class="comment">%svdFluxEnsemble Perform SVD on flux ensemble</span>
+0003 <span class="comment">%   This function will take a flux ensemble structure and perform</span>
+0004 <span class="comment">%   the SVD decomposition of the flux ensemble.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   samples := RAVEN model post optGpSampler w/ loops removed</span>
+0007 <span class="comment">%   s_ind := substrate index</span>
+0008 <span class="comment">%    scree_plot := Boolean value, true if you want a Scree plot</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%   Output:</span>
+0011 <span class="comment">%   SVDstats := Structure with SVD stats</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% R. Adam Thompson</span>
+0014 <span class="comment">% Trinh Lab</span>
+0015 <span class="comment">% University of Tennessee, Knoxville</span>
+0016 <span class="comment">% rthomp46@utk.edu</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% Created: August 8, 2016</span>
+0019 <span class="comment">% Last edit:</span>
+0020 
+0021 <span class="comment">% Normalize, mean center, and scale flux-vectors</span>
+0022 <span class="comment">% vs = real(samples.newpoints);</span>
+0023 <span class="comment">% vssums = sqrt(sum(vs.^2));</span>
+0024 <span class="comment">% vs = vs*spdiags(vssums',0,1,1);</span>
+0025 <span class="comment">% vs = full(vs);</span>
+0026 
+0027 <span class="comment">% Normalize to substrate</span>
+0028 [m,n] = size(vs);
+0029 <span class="keyword">for</span> i = 1:n
+0030     vs(:,i) = vs(:,i)./vs(s_ind,i);
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="comment">% Perform SVD</span>
+0034 [SVDstats.Uv SVDstats.Sv SVDstats.Vv] = svd(vs,<span class="string">'econ'</span>);
+0035 
+0036 <span class="comment">% Calculate mean to compare to first principal component vector from U</span>
+0037 SVDstats.vmean = mean(vs,2);
+0038 <span class="comment">% Calculate standard deviation for each of the fluxes</span>
+0039 SVDstats.vstd = std(vs,0,2);
+0040 
+0041 <span class="comment">% Construct scree plot</span>
+0042 Sdiag = diag(SVDstats.Sv);
+0043 S2 = Sdiag.^2;
+0044 S2 = S2/sum(S2);
+0045 S2 = cumsum(S2);
+0046 
+0047 <span class="keyword">if</span> scree_plot == true
+0048 figure
+0049 plot(S2)
+0050 xlabel(<span class="string">'Number of principal components'</span>)
+0051 ylabel(<span class="string">'Fraction of cumulative sum of squared singular values'</span>)
+0052 grid on
+0053 xlim([0 10])
+0054 <span class="keyword">end</span>
+0055 
+0056 SVDstats.vs = vs;
+0057 SVDstats.S2 = S2;
+0058</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

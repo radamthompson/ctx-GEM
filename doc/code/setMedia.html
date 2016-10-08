@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setMedia</title>
+  <meta name="keywords" content="setMedia">
+  <meta name="description" content="setMedia Define media recipe for C therm for C therm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setMedia
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setMedia Define media recipe for C therm for C therm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setMedia( model, recipe ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setMedia Define media recipe for C therm for C therm
+   This script takes a C therm GEM and sets either cellobiose or cellulose
+   for a carbon source. This script works for version 10.11 onwards with
+   an active cellulosome reaction
+
+   model := RAVEN model
+   recipe := string designating media recipe:
+                     'lc'        LC media (Holwerda et al, 2012)
+                     'mtc'       MTC media (Thompson et al, 2015)
+                     'mnm'     MNM media (Kridelbaugh et al, 2013)
+                     'ctfud'     Complex media, take up everything
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 5, 2015
+ Last edit: Sep 9,2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function newModel = setMinimal(model)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setMedia( model, recipe )</a>
+0002 <span class="comment">%setMedia Define media recipe for C therm for C therm</span>
+0003 <span class="comment">%   This script takes a C therm GEM and sets either cellobiose or cellulose</span>
+0004 <span class="comment">%   for a carbon source. This script works for version 10.11 onwards with</span>
+0005 <span class="comment">%   an active cellulosome reaction</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   model := RAVEN model</span>
+0008 <span class="comment">%   recipe := string designating media recipe:</span>
+0009 <span class="comment">%                     'lc'        LC media (Holwerda et al, 2012)</span>
+0010 <span class="comment">%                     'mtc'       MTC media (Thompson et al, 2015)</span>
+0011 <span class="comment">%                     'mnm'     MNM media (Kridelbaugh et al, 2013)</span>
+0012 <span class="comment">%                     'ctfud'     Complex media, take up everything</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% R. Adam Thompson</span>
+0015 <span class="comment">% Trinh Lab</span>
+0016 <span class="comment">% University of Tennessee, Knoxville</span>
+0017 <span class="comment">% rthomp46@utk.edu</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Created: Aug 5, 2015</span>
+0020 <span class="comment">% Last edit: Sep 9,2015</span>
+0021 
+0022 newModel = model;
+0023 
+0024 <span class="keyword">switch</span> recipe
+0025     <span class="keyword">case</span> <span class="string">'mtc'</span>
+0026         newModel = <a href="#_sub1" class="code" title="subfunction newModel = setMinimal(model)">setMinimal</a>(newModel);
+0027         
+0028         <span class="comment">% CB uptake just to have a somewhat reasonable default</span>
+0029         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,5);
+0030         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0031         
+0032         <span class="comment">%Sulfur sources</span>
+0033         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m25'</span>,1000); <span class="comment">%SO4</span>
+0034         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m25'</span>,0);
+0035         
+0036         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%H2S</span>
+0037         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0);
+0038         
+0039         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m35'</span>,1000); <span class="comment">%Cysteine, uptake value is kind of arbitrary</span>
+0040         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,-0.5);
+0041         
+0042         <span class="comment">% Nitrogen</span>
+0043 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m17',1.5); %NH3</span>
+0044 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m21',1.5);  % Urea</span>
+0045         
+0046         <span class="comment">%Extra vitamins</span>
+0047         <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m28',0); % Pantothenate</span>
+0048         <span class="comment">%         newModel=setParam(newModel,'lb','EXC_IN_m28',0);</span>
+0049         <span class="comment">%</span>
+0050         <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m30',1000); % Nicotinamide</span>
+0051         <span class="comment">%         newModel=setParam(newModel,'lb','EXC_IN_m30',0);</span>
+0052         
+0053     <span class="keyword">case</span> <span class="string">'lc'</span>
+0054         newModel = <a href="#_sub1" class="code" title="subfunction newModel = setMinimal(model)">setMinimal</a>(newModel);
+0055         
+0056         <span class="comment">%Sulfur sources</span>
+0057         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m25'</span>,0); <span class="comment">%SO4</span>
+0058         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m25'</span>,0);
+0059         
+0060         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%H2S</span>
+0061         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0);
+0062         
+0063         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m35'</span>,1000); <span class="comment">%Cysteine, set at 10 fold less than MTC value for media differences, also rather arbitrary</span>
+0064         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,-0.5);
+0065         
+0066         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m21'</span>,0);  <span class="comment">% Urea</span>
+0067         
+0068     <span class="keyword">case</span> <span class="string">'mnm'</span>
+0069         newModel = <a href="#_sub1" class="code" title="subfunction newModel = setMinimal(model)">setMinimal</a>(newModel);
+0070         
+0071         <span class="comment">%Sulfur sources</span>
+0072         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m25'</span>,0); <span class="comment">%SO4</span>
+0073         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m25'</span>,0);
+0074         
+0075         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,1000); <span class="comment">%H2S</span>
+0076         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0);
+0077         
+0078         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m35'</span>,0);
+0079         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,0);
+0080         
+0081         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m17'</span>,0);  <span class="comment">% NH4</span>
+0082         
+0083     <span class="keyword">case</span> <span class="string">'ctfud'</span>
+0084         <span class="comment">%Sulfur sources</span>
+0085         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m25'</span>,1000); <span class="comment">%SO4</span>
+0086         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m25'</span>,0);
+0087         
+0088         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,1000); <span class="comment">%H2S</span>
+0089         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0);
+0090         <span class="comment">%Extra vitamins</span>
+0091         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m28'</span>,1000); <span class="comment">% Pantothenate</span>
+0092         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m28'</span>,0);
+0093         
+0094         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m30'</span>,1000); <span class="comment">% Nicotinamide</span>
+0095         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m30'</span>,0);
+0096         
+0097         <span class="comment">% Amino Acids - arbitrary uptake rates, probably too high</span>
+0098         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,-10); <span class="comment">%Ala</span>
+0099         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m32'</span>,-10); <span class="comment">%Arg</span>
+0100         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m33'</span>,-10); <span class="comment">%Asp</span>
+0101         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m34'</span>,-10); <span class="comment">%Asn</span>
+0102         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,-10); <span class="comment">%Cys</span>
+0103         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m36'</span>,-10); <span class="comment">%Glu</span>
+0104         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m37'</span>,-10); <span class="comment">%Gln</span>
+0105         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m38'</span>,-10); <span class="comment">%Gly</span>
+0106         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m39'</span>,-10); <span class="comment">%His</span>
+0107         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,-10); <span class="comment">%Iso</span>
+0108         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m41'</span>,-10); <span class="comment">%Leu</span>
+0109         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m42'</span>,-10); <span class="comment">%Lys</span>
+0110         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m43'</span>,-10); <span class="comment">%Met</span>
+0111         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m44'</span>,-10); <span class="comment">%Phe</span>
+0112         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m45'</span>,-10); <span class="comment">%Pro</span>
+0113         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m46'</span>,-10); <span class="comment">%Ser</span>
+0114         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m47'</span>,-10); <span class="comment">%Thr</span>
+0115         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m48'</span>,-10); <span class="comment">%Trp</span>
+0116         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m49'</span>,-10); <span class="comment">%Tyr</span>
+0117         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,-10); <span class="comment">%Val</span>
+0118 <span class="keyword">end</span>
+0119 
+0120 
+0121 <span class="keyword">end</span>
+0122 
+0123 <a name="_sub1" href="#_subfunctions" class="code">function newModel = setMinimal(model)</a>
+0124 
+0125 <span class="comment">% Set amino acid uptake to zero</span>
+0126 newModel = model;
+0127 
+0128 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0); <span class="comment">%Ala</span>
+0129 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m32'</span>,0); <span class="comment">%Arg</span>
+0130 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m33'</span>,0); <span class="comment">%Asp</span>
+0131 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m34'</span>,0); <span class="comment">%Asn</span>
+0132 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,0); <span class="comment">%Cys</span>
+0133 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m36'</span>,0); <span class="comment">%Glu</span>
+0134 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m37'</span>,0); <span class="comment">%Gln</span>
+0135 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m38'</span>,0); <span class="comment">%Gly</span>
+0136 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m39'</span>,0); <span class="comment">%His</span>
+0137 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0); <span class="comment">%Iso</span>
+0138 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m41'</span>,0); <span class="comment">%Leu</span>
+0139 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m42'</span>,0); <span class="comment">%Lys</span>
+0140 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m43'</span>,0); <span class="comment">%Met</span>
+0141 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m44'</span>,0); <span class="comment">%Phe</span>
+0142 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m45'</span>,0); <span class="comment">%Pro</span>
+0143 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m46'</span>,0); <span class="comment">%Ser</span>
+0144 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m47'</span>,0); <span class="comment">%Thr</span>
+0145 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m48'</span>,0); <span class="comment">%Trp</span>
+0146 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m49'</span>,0); <span class="comment">%Tyr</span>
+0147 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0); <span class="comment">%Val</span>
+0148 
+0149 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

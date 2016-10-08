@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calcFluxSum</title>
+  <meta name="keywords" content="calcFluxSum">
+  <meta name="description" content="calcFluxSum Calculate metabolite turnover rates within a GEM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>calcFluxSum
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>calcFluxSum Calculate metabolite turnover rates within a GEM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ FluxSumArr ] = calcFluxSum( model, LPsoln, metList, printInfo, normbool ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">calcFluxSum Calculate metabolite turnover rates within a GEM
+   This script is designed to calculate the Flux Sum of a given list of
+   metabolites following the derivation in Lakshmanan et al, 2015, J Ind
+   Microb Biot, doi:10.1007/s10295-015-1663-0
+
+    model := RAVEN or COBRA model
+    LPsoln := LP solution vector, returned as ans.x from RAVEN's solveLP() or COBRA's optimizeCbModel()
+    metList := Cell array of metabolite names of interest, needs to match
+    model.metNames
+    printInfo := Logical for printing Flux Sums to command window, optional, default = false
+   normbool := Logical for normalizing to substrate uptake rate, optional, default = false
+
+    FluxSumArr := Array of flux sums in the order of metList
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 21, 2015
+ Change Log: 
+   June 10, 2016 - Added normalization option</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ FluxSumArr ] = calcFluxSum( model, LPsoln, metList, printInfo, normbool )</a>
+0002 <span class="comment">%calcFluxSum Calculate metabolite turnover rates within a GEM</span>
+0003 <span class="comment">%   This script is designed to calculate the Flux Sum of a given list of</span>
+0004 <span class="comment">%   metabolites following the derivation in Lakshmanan et al, 2015, J Ind</span>
+0005 <span class="comment">%   Microb Biot, doi:10.1007/s10295-015-1663-0</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%    model := RAVEN or COBRA model</span>
+0008 <span class="comment">%    LPsoln := LP solution vector, returned as ans.x from RAVEN's solveLP() or COBRA's optimizeCbModel()</span>
+0009 <span class="comment">%    metList := Cell array of metabolite names of interest, needs to match</span>
+0010 <span class="comment">%    model.metNames</span>
+0011 <span class="comment">%    printInfo := Logical for printing Flux Sums to command window, optional, default = false</span>
+0012 <span class="comment">%   normbool := Logical for normalizing to substrate uptake rate, optional, default = false</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%    FluxSumArr := Array of flux sums in the order of metList</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% R. Adam Thompson</span>
+0017 <span class="comment">% Trinh Lab</span>
+0018 <span class="comment">% University of Tennessee, Knoxville</span>
+0019 <span class="comment">% rthomp46@utk.edu</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Created: Aug 21, 2015</span>
+0022 <span class="comment">% Change Log:</span>
+0023 <span class="comment">%   June 10, 2016 - Added normalization option</span>
+0024 
+0025 <span class="keyword">if</span> nargin &lt; 4
+0026     printInfo = 0;
+0027 <span class="keyword">end</span>
+0028 <span class="keyword">if</span> nargin &lt; 5
+0029     normbool = 0;
+0030 <span class="keyword">end</span>
+0031 
+0032 
+0033 [Sm Sn] = size(model.S);
+0034 S = full(model.S);
+0035 FluxSumArr = zeros(length(metList),1);
+0036 
+0037 <span class="keyword">if</span> normbool
+0038     uprate = LPsoln(759);
+0039     LPsoln = LPsoln./uprate;
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="keyword">for</span> i = 1:length(metList)
+0043     idx = strcmp(model.metNames,metList{i});
+0044     idx = find(idx);
+0045     idx = min(idx);
+0046     metRxns = S(idx,:);
+0047     phi = zeros(Sn,1);
+0048     <span class="keyword">for</span> j = 1:Sn
+0049         phi(j) = abs(metRxns(j)*LPsoln(j));
+0050     <span class="keyword">end</span>
+0051     fluxSum = 0.5 * sum(phi);
+0052     FluxSumArr(i) = fluxSum;
+0053 <span class="keyword">end</span>
+0054 
+0055 <span class="keyword">if</span> printInfo
+0056     fprintf(<span class="string">'Flux Sums\n'</span>)
+0057     <span class="keyword">for</span> k = 1:length(metList)
+0058     fprintf(<span class="string">'%20s \t\t %0.5g\n'</span>,metList{k},FluxSumArr(k))
+0059     <span class="keyword">end</span>
+0060     fprintf(<span class="string">' \n'</span>)
+0061 
+0062 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

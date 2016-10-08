@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getAAfromArray</title>
+  <meta name="keywords" content="getAAfromArray">
+  <meta name="description" content="getAAfromArray Pull total amino acid flux for an array of LP solutions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>getAAfromArray
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>getAAfromArray Pull total amino acid flux for an array of LP solutions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function AminoAcids = getAAfromArray(model, x_array) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">getAAfromArray Pull total amino acid flux for an array of LP solutions
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: July 7, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function AminoAcids = getAAfromArray(model, x_array)</a>
+0002 <span class="comment">%getAAfromArray Pull total amino acid flux for an array of LP solutions</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% R. Adam Thompson</span>
+0005 <span class="comment">% Trinh Lab</span>
+0006 <span class="comment">% University of Tennessee, Knoxville</span>
+0007 <span class="comment">% rthomp46@utk.edu</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Created: July 7, 2015</span>
+0010 
+0011 <span class="comment">%Initialize</span>
+0012 AaExRxns = {<span class="string">'EXC_BOTH_m31'</span>;<span class="string">'EXC_BOTH_m32'</span>;<span class="string">'EXC_BOTH_m33'</span>;<span class="string">'EXC_BOTH_m34'</span>;<span class="string">'EXC_BOTH_m35'</span>;<span class="string">'EXC_BOTH_m36'</span>;<span class="string">'EXC_BOTH_m37'</span>;<span class="string">'EXC_BOTH_m38'</span>;<span class="string">'EXC_BOTH_m39'</span>;<span class="string">'EXC_BOTH_m40'</span>;<span class="string">'EXC_BOTH_m41'</span>;<span class="string">'EXC_BOTH_m42'</span>;<span class="string">'EXC_BOTH_m43'</span>;<span class="string">'EXC_BOTH_m44'</span>;<span class="string">'EXC_BOTH_m45'</span>;<span class="string">'EXC_BOTH_m46'</span>;<span class="string">'EXC_BOTH_m47'</span>;<span class="string">'EXC_BOTH_m48'</span>;<span class="string">'EXC_BOTH_m49'</span>;<span class="string">'EXC_BOTH_m50'</span>};
+0013 rxnidx = ones(size(AaExRxns));
+0014 AminoAcids = zeros(size(AaExRxns), max(size(x_array)));
+0015 
+0016 <span class="comment">% Get indicies</span>
+0017 <span class="keyword">for</span> i = 1:length(AaExRxns)
+0018     idx = find(strcmp(model.rxns,AaExRxns{i}));
+0019     rxnidx(i) = idx;
+0020 <span class="keyword">end</span>
+0021 a = 1
+0022 <span class="comment">% Get AA fluxes</span>
+0023 <span class="keyword">for</span> j = 1:max(size(x_array))
+0024     AminoAcids(:,j) = x_array(rxnidx,j);
+0025 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

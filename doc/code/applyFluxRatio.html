@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of applyFluxRatio</title>
+  <meta name="keywords" content="applyFluxRatio">
+  <meta name="description" content="applyFluxRatio Add in a flux ratio constraint to a RAVEN GEM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>applyFluxRatio
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>applyFluxRatio Add in a flux ratio constraint to a RAVEN GEM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = applyFluxRatio( model, ratio, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">applyFluxRatio Add in a flux ratio constraint to a RAVEN GEM
+   Setting up a shell to add Flux Ratio constraints to a genome scale
+   model. That way I can add the constraints in a stepwise manner as I
+   come up with them and apply ratios in a softcoded manner. Original
+   constraint is glucose equivalents constraining cellodextrin import.
+
+   ratio :=
+       'gluEq'         Set up glucose equivalents ratio
+        'Neq'           Nitrogen equivalents ratio
+       'EA'            Ethanol: Acetate ratio, via EXC_ rxns
+       'EA2'           Ethanol: Acetate from acetyl-CoA
+       'FC'            Formate: CO2 ratio
+       'HF'            Hydrogen: Formate ratio
+       'YE+YA'     Sum of ethanol and acetate yields. argin should be mu or D
+       'gluEq2'    Glucose equivalents ratio with
+
+       varargin{1} := value for flux ratio
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 3, 2015
+ Last edit: Feb 9, 2016
+    10/7/2016: Added some documentation</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = applyFluxRatio( model, ratio, varargin )</a>
+0002 <span class="comment">%applyFluxRatio Add in a flux ratio constraint to a RAVEN GEM</span>
+0003 <span class="comment">%   Setting up a shell to add Flux Ratio constraints to a genome scale</span>
+0004 <span class="comment">%   model. That way I can add the constraints in a stepwise manner as I</span>
+0005 <span class="comment">%   come up with them and apply ratios in a softcoded manner. Original</span>
+0006 <span class="comment">%   constraint is glucose equivalents constraining cellodextrin import.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   ratio :=</span>
+0009 <span class="comment">%       'gluEq'         Set up glucose equivalents ratio</span>
+0010 <span class="comment">%        'Neq'           Nitrogen equivalents ratio</span>
+0011 <span class="comment">%       'EA'            Ethanol: Acetate ratio, via EXC_ rxns</span>
+0012 <span class="comment">%       'EA2'           Ethanol: Acetate from acetyl-CoA</span>
+0013 <span class="comment">%       'FC'            Formate: CO2 ratio</span>
+0014 <span class="comment">%       'HF'            Hydrogen: Formate ratio</span>
+0015 <span class="comment">%       'YE+YA'     Sum of ethanol and acetate yields. argin should be mu or D</span>
+0016 <span class="comment">%       'gluEq2'    Glucose equivalents ratio with</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%       varargin{1} := value for flux ratio</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% R. Adam Thompson</span>
+0021 <span class="comment">% Trinh Lab</span>
+0022 <span class="comment">% University of Tennessee, Knoxville</span>
+0023 <span class="comment">% rthomp46@utk.edu</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Created: Aug 3, 2015</span>
+0026 <span class="comment">% Last edit: Feb 9, 2016</span>
+0027 <span class="comment">%    10/7/2016: Added some documentation</span>
+0028 
+0029 
+0030 newModel = model;
+0031 rxns = model.rxns;
+0032 S = model.S;
+0033 S = full(S);
+0034 [m n] = size(S);
+0035 S = [S; zeros(1,n)];
+0036 
+0037 <span class="keyword">switch</span> ratio
+0038     <span class="keyword">case</span> <span class="string">'gluEq'</span> <span class="comment">% Glucose equivalent flux ratio</span>
+0039         
+0040         rHexIdx = strcmp(rxns,<span class="string">'EXC_IN_m97'</span>); <span class="comment">%Cellohexaose</span>
+0041         rPentIdx = strcmp(rxns,<span class="string">'EXC_IN_m98'</span>); <span class="comment">%Cellopentaose</span>
+0042         rTetIdx = strcmp(rxns,<span class="string">'EXC_IN_m99'</span>); <span class="comment">%Cellotetraose</span>
+0043         rTriIdx = strcmp(rxns,<span class="string">'EXC_IN_m100'</span>); <span class="comment">%Cellotriose</span>
+0044         rCBIdx = strcmp(rxns,<span class="string">'EXC_IN_m20'</span>); <span class="comment">%Cellobiose</span>
+0045         rGEqIdx = strcmp(rxns,<span class="string">'EXC_IN_m101'</span>); <span class="comment">%Glucose equivalents</span>
+0046         
+0047         S(m+1,rHexIdx) = -6;
+0048         S(m+1,rPentIdx) = -5;
+0049         S(m+1,rTetIdx) = -4;
+0050         S(m+1,rTriIdx) = -3;
+0051         S(m+1,rCBIdx) = -2;
+0052         S(m+1,rGEqIdx) = 1;
+0053         
+0054         S = sparse(S);
+0055         
+0056         newModel.S = S;
+0057         newModel.b = [model.b; 0];
+0058         newModel.mets = [model.mets; <span class="string">'fr_glu_eq'</span>];
+0059         newModel.metNames = [model.metNames; <span class="string">'FR_Glu_Eq'</span>];
+0060         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0061             newModel.metComps = [model.metComps; 1];
+0062             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0063             newModel.unconstrained = [model.unconstrained; 0];
+0064         <span class="keyword">else</span>
+0065             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0066             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0067             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0068             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0069         <span class="keyword">end</span>
+0070         
+0071     <span class="keyword">case</span> <span class="string">'Neq'</span> <span class="comment">% Nitrogen equivalents flux ratio</span>
+0072         
+0073         rNH3Idx = strcmp(rxns,<span class="string">'EXC_IN_m17'</span>);
+0074         rUreaIdx = strcmp(rxns,<span class="string">'EXC_IN_m21'</span>);
+0075         rNEqIdx = strcmp(rxns,<span class="string">'EXC_IN_'</span>);
+0076         
+0077         S(m+1,rNH3Idx) = -1;
+0078         S(m+1,rUreaIdx) = -2;
+0079         S(m+1,rNEqIdx) = 1;
+0080         
+0081         S = sparse(S);
+0082         
+0083         newModel.S = S;
+0084         newModel.b = [model.b; 0];
+0085         newModel.mets = [model.mets; <span class="string">'fr_nitr_eq'</span>];
+0086         newModel.metNames = [model.metNames; <span class="string">'FR_Nitr_Eq'</span>];
+0087         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0088             newModel.metComps = [model.metComps; 1];
+0089             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0090             newModel.unconstrained = [model.unconstrained; 0];
+0091         <span class="keyword">else</span>
+0092             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0093             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0094             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0095             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0096         <span class="keyword">end</span>
+0097         
+0098     <span class="keyword">case</span> <span class="string">'EA'</span> <span class="comment">% Ethanol: Acetate ratio (mol:mol)</span>
+0099         
+0100         value = varargin{1};
+0101         
+0102         rETHIdx = strcmp(rxns,<span class="string">'EXC_OUT_m51'</span>);
+0103         rACEIdx = strcmp(rxns,<span class="string">'EXC_OUT_m52'</span>);
+0104         
+0105         S(m+1,rETHIdx) = -1;
+0106         S(m+1,rACEIdx) = value;
+0107         
+0108         S = sparse(S);
+0109         
+0110         newModel.S = S;
+0111         newModel.b = [model.b; 0];
+0112         newModel.mets = [model.mets; <span class="string">'fr_EA'</span>];
+0113         newModel.metNames = [model.metNames; <span class="string">'FR_ETH-ACE'</span>];
+0114         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0115             newModel.metComps = [model.metComps; 1];
+0116             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0117             newModel.unconstrained = [model.unconstrained; 0];
+0118         <span class="keyword">else</span>
+0119             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0120             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0121             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0122             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0123         <span class="keyword">end</span>
+0124         
+0125     <span class="keyword">case</span> <span class="string">'FC'</span> <span class="comment">% Formate:CO2 ratio</span>
+0126         
+0127         value = varargin{1};
+0128         
+0129         rFORIdx = strcmp(rxns,<span class="string">'EXC_OUT_m53'</span>);
+0130         rCO2Idx = strcmp(rxns,<span class="string">'EXC_BOTH_m19'</span>);
+0131         
+0132         S(m+1,rFORIdx) = -1;
+0133         S(m+1,rCO2Idx) = value;
+0134         
+0135         S = sparse(S);
+0136         
+0137         newModel.S = S;
+0138         newModel.b = [model.b; 0];
+0139         newModel.mets = [model.mets; <span class="string">'fr_FC'</span>];
+0140         newModel.metNames = [model.metNames; <span class="string">'FR_FOR-CO2'</span>];
+0141         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0142             newModel.metComps = [model.metComps; 1];
+0143             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0144             newModel.unconstrained = [model.unconstrained; 0];
+0145         <span class="keyword">else</span>
+0146             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0147             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0148             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0149             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0150         <span class="keyword">end</span>
+0151         
+0152     <span class="keyword">case</span> <span class="string">'HF'</span>  <span class="comment">%Hydrogen to Formate ratio</span>
+0153         
+0154         value = varargin{1};
+0155         
+0156         rFORIdx = strcmp(rxns,<span class="string">'EXC_OUT_m53'</span>);
+0157         rH2Idx = strcmp(rxns,<span class="string">'EXC_OUT_m55'</span>);
+0158         
+0159         S(m+1,rFORIdx) = value;
+0160         S(m+1,rH2Idx) = -1;
+0161         
+0162         S = sparse(S);
+0163         
+0164         newModel.S = S;
+0165         newModel.b = [model.b; 0];
+0166         newModel.mets = [model.mets; <span class="string">'fr_HF'</span>];
+0167         newModel.metNames = [model.metNames; <span class="string">'FR_H2-FOR'</span>];
+0168         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0169             newModel.metComps = [model.metComps; 1];
+0170             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0171             newModel.unconstrained = [model.unconstrained; 0];
+0172         <span class="keyword">else</span>
+0173             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0174             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0175             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0176             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0177         <span class="keyword">end</span>
+0178         
+0179     <span class="keyword">case</span> <span class="string">'YE+YA'</span>  <span class="comment">% Sum of ethanol and acetate yields incorporated as flux ratio</span>
+0180         
+0181         value = varargin{1};
+0182         
+0183         rETHIdx = strcmp(rxns,<span class="string">'EXC_OUT_m51'</span>);
+0184         rACEIdx = strcmp(rxns,<span class="string">'EXC_OUT_m52'</span>);
+0185         rGEqIdx = strcmp(rxns,<span class="string">'EXC_IN_m101'</span>);
+0186         
+0187         <span class="comment">% val = -3 * value + 2;</span>
+0188         
+0189         S(m+1,rETHIdx) = -1;
+0190         S(m+1,rACEIdx) = -1;
+0191         S(m+1,rGEqIdx) = value;
+0192         
+0193         S = sparse(S);
+0194         
+0195         newModel.S = S;
+0196         newModel.b = [model.b; 0];
+0197         newModel.mets = [model.mets; <span class="string">'fr_YEYA'</span>];
+0198         newModel.metNames = [model.metNames; <span class="string">'FR_YEYA'</span>];
+0199         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0200             newModel.metComps = [model.metComps; 1];
+0201             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0202             newModel.unconstrained = [model.unconstrained; 0];
+0203         <span class="keyword">else</span>
+0204             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0205             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0206             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0207             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0208         <span class="keyword">end</span>
+0209         
+0210     <span class="keyword">case</span> <span class="string">'EA2'</span> <span class="comment">%Ethanol: Acetate from acetyl-CoA</span>
+0211         
+0212         value = varargin{1};
+0213         
+0214         rETHIdx = strcmp(rxns,<span class="string">'R_R00228_c'</span>);
+0215         rACEIdx = strcmp(rxns,<span class="string">'R_R00230_c'</span>);
+0216         
+0217         S(m+1,rETHIdx) = -1;
+0218         S(m+1,rACEIdx) = value;
+0219         
+0220         S = sparse(S);
+0221         
+0222         newModel.S = S;
+0223         newModel.b = [model.b; 0];
+0224         newModel.mets = [model.mets; <span class="string">'fr_EA'</span>];
+0225         newModel.metNames = [model.metNames; <span class="string">'FR_ETH-ACE'</span>];
+0226         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0227             newModel.metComps = [model.metComps; 1];
+0228             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0229             newModel.unconstrained = [model.unconstrained; 0];
+0230         <span class="keyword">else</span>
+0231             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0232             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0233             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0234             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0235         <span class="keyword">end</span>
+0236         
+0237     <span class="keyword">case</span> <span class="string">'gluEq2'</span>  <span class="comment">% Including glucose in the Flux Ratio</span>
+0238         
+0239         rHexIdx = strcmp(rxns,<span class="string">'EXC_IN_m97'</span>); <span class="comment">%Cellohexaose</span>
+0240         rPentIdx = strcmp(rxns,<span class="string">'EXC_IN_m98'</span>); <span class="comment">%Cellopentaose</span>
+0241         rTetIdx = strcmp(rxns,<span class="string">'EXC_IN_m99'</span>); <span class="comment">%Cellotetraose</span>
+0242         rTriIdx = strcmp(rxns,<span class="string">'EXC_IN_m100'</span>); <span class="comment">%Cellotriose</span>
+0243         rCBIdx = strcmp(rxns,<span class="string">'EXC_IN_m20'</span>); <span class="comment">%Cellobiose</span>
+0244         rGLCIdx = strcmp(rxns,<span class="string">'EXC_IN_m114'</span>); <span class="comment">%Glucose</span>
+0245         rGEqIdx = strcmp(rxns,<span class="string">'EXC_IN_m101'</span>); <span class="comment">%Glucose equivalents</span>
+0246         
+0247         S(m+1,rHexIdx) = -6;
+0248         S(m+1,rPentIdx) = -5;
+0249         S(m+1,rTetIdx) = -4;
+0250         S(m+1,rTriIdx) = -3;
+0251         S(m+1,rCBIdx) = -2;
+0252         S(m+1,rGLCIdx) = -1;
+0253         S(m+1,rGEqIdx) = 1;
+0254         
+0255         S = sparse(S);
+0256         
+0257         newModel.S = S;
+0258         newModel.b = [model.b; 0];
+0259         newModel.mets = [model.mets; <span class="string">'fr_glu_eq'</span>];
+0260         newModel.metNames = [model.metNames; <span class="string">'FR_Glu_Eq'</span>];
+0261         <span class="keyword">if</span> isfield(newModel,<span class="string">'metComps'</span>)
+0262             newModel.metComps = [model.metComps; 1];
+0263             newModel.metFormulas = [model.metFormulas; <span class="string">' '</span>];
+0264             newModel.unconstrained = [model.unconstrained; 0];
+0265         <span class="keyword">else</span>
+0266             newModel.metChEBIID = [model.metChEBIID; <span class="string">' '</span>];
+0267             newModel.metKEGGID = [model.metKEGGID; <span class="string">' '</span>];
+0268             newModel.metPubChemID = [model.metPubChemID; <span class="string">' '</span>];
+0269             newModel.metInChIString = [model.metInChIString; <span class="string">' '</span>];
+0270         <span class="keyword">end</span>
+0271 <span class="keyword">end</span>
+0272</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

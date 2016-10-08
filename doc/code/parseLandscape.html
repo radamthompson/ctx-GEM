@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of parseLandscape</title>
+  <meta name="keywords" content="parseLandscape">
+  <meta name="description" content="parseLandscape Parse through exploration landscape">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>parseLandscape
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>parseLandscape Parse through exploration landscape</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ yields ] = parseLandscape( landscape, model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">parseLandscape Parse through exploration landscape
+
+   This function will parse through an output from
+   'exploreEnergyBalance.m'. Assumes 5 mmol / gDCW / hr glucose uptake.
+
+   yields := structure of values to be plotted elsewhere
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Nov 19, 2015
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ yields ] = parseLandscape( landscape, model )</a>
+0002 <span class="comment">%parseLandscape Parse through exploration landscape</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   This function will parse through an output from</span>
+0005 <span class="comment">%   'exploreEnergyBalance.m'. Assumes 5 mmol / gDCW / hr glucose uptake.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   yields := structure of values to be plotted elsewhere</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% R. Adam Thompson</span>
+0010 <span class="comment">% Trinh Lab</span>
+0011 <span class="comment">% University of Tennessee, Knoxville</span>
+0012 <span class="comment">% rthomp46@utk.edu</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Created: Nov 19, 2015</span>
+0015 <span class="comment">% Last edit:</span>
+0016 
+0017 n = length(landscape);
+0018 rxns = model.rxns;
+0019 
+0020 ETHIdx = strcmp(rxns,<span class="string">'EXC_OUT_m51'</span>);
+0021 IBOHIdx = strcmp(rxns,<span class="string">'EXC_OUT_m109'</span>);
+0022 H2Idx = strcmp(rxns,<span class="string">'EXC_OUT_m55'</span>);
+0023 ACEIdx = strcmp(rxns,<span class="string">'EXC_OUT_m52'</span>);
+0024 
+0025 
+0026 mu = zeros(n,1);
+0027 eth = zeros(n,1);
+0028 h2 = zeros(n,1);
+0029 iboh = zeros(n,1);
+0030 ace = zeros(n,1);
+0031 ols = zeros(n,2); <span class="comment">% [eth iboh]</span>
+0032 all = zeros(n,3); <span class="comment">% [eth iboh h2]</span>
+0033 
+0034 <span class="comment">% Calc. yields (mol P / mol gluc)</span>
+0035 <span class="keyword">for</span> i = 1:n
+0036     lsc = landscape{i};
+0037     <span class="keyword">if</span> lsc.mu.stat == 1
+0038         mu(i) = lsc.mu.f;
+0039     <span class="keyword">end</span>
+0040     <span class="keyword">if</span> lsc.eth.stat == 1
+0041         eth(i) = lsc.eth.f/5;
+0042     <span class="keyword">end</span>
+0043     <span class="keyword">if</span> lsc.ace.stat ==1
+0044         ace(i) = lsc.ace.f/5;
+0045     <span class="keyword">end</span>
+0046     <span class="keyword">if</span> lsc.h2.stat == 1
+0047         h2(i) = lsc.h2.f/5;
+0048     <span class="keyword">end</span>
+0049     <span class="keyword">if</span> lsc.iboh.stat ==1
+0050         iboh(i) = lsc.iboh.f/5;
+0051     <span class="keyword">end</span>
+0052     <span class="keyword">if</span> lsc.ols.stat == 1
+0053         ols(i,:) = [lsc.ols.x(ETHIdx)/5 lsc.ols.x(IBOHIdx)/5];
+0054     <span class="keyword">else</span>
+0055         ols(i,:) = [0 0];
+0056     <span class="keyword">end</span>
+0057     <span class="keyword">if</span> lsc.all.stat == 1
+0058         all(i,:) = [lsc.all.x(ETHIdx)/5 lsc.all.x(IBOHIdx)/5 lsc.all.x(H2Idx)/5];
+0059     <span class="keyword">else</span>
+0060         all(i,:) = [0 0 0];
+0061     <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 yields.mu = mu;
+0065 yields.eth = eth;
+0066 yields.ace = ace;
+0067 yields.h2 = h2;
+0068 yields.iboh = iboh;
+0069 yields.ols = ols;
+0070 yields.all = all;</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

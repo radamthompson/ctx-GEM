@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setWTparam</title>
+  <meta name="keywords" content="setWTparam">
+  <meta name="description" content="setWTparam Take a model and apply WT constraints">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setWTparam
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setWTparam Take a model and apply WT constraints</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setWTparam( model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setWTparam Take a model and apply WT constraints
+   Experimental data constraints using WT strain
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: July 24, 2015
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="setExptParam.html" class="code" title="function [ newModel ] = setExptParam( model, c_source, expt )">setExptParam</a>	setExptParam Master parameter setting function for C. therm. GEM</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setWTparam( model )</a>
+0002 <span class="comment">%setWTparam Take a model and apply WT constraints</span>
+0003 <span class="comment">%   Experimental data constraints using WT strain</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% R. Adam Thompson</span>
+0007 <span class="comment">% Trinh Lab</span>
+0008 <span class="comment">% University of Tennessee, Knoxville</span>
+0009 <span class="comment">% rthomp46@utk.edu</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Created: July 24, 2015</span>
+0012 <span class="comment">% Last edit:</span>
+0013 
+0014 newModel = model;
+0015 
+0016 <span class="comment">% Set Experimental Ranges</span>
+0017 <span class="comment">% CB uptake</span>
+0018 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,3.7443); 
+0019 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,3.4158);
+0020 
+0021 <span class="comment">% Ethanol Production</span>
+0022 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,4.2894); 
+0023 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,4.0805);
+0024 
+0025 <span class="comment">% Acetate</span>
+0026 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,2.7182); 
+0027 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,2.5465);
+0028 
+0029 <span class="comment">% CO2</span>
+0030 <span class="comment">%newModel=setParam(newModel,'ub','EXC_BOTH_m19',8.264);</span>
+0031 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m19'</span>,6.8177);
+0032 
+0033 <span class="comment">% Hydrogen</span>
+0034 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m55'</span>,8.2357); 
+0035 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m55'</span>,7.4882);
+0036 
+0037 <span class="comment">% Formate</span>
+0038 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,1.7770); 
+0039 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,1.7600);
+0040 
+0041 <span class="comment">% Valine</span>
+0042 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m50'</span>,0.8963); 
+0043 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0.6560);
+0044 
+0045 <span class="comment">% Ile</span>
+0046 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m40'</span>,0.1184); 
+0047 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0.0871);
+0048 
+0049 <span class="comment">% Ala</span>
+0050 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m31'</span>,0.0); 
+0051 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0.0);
+0052 
+0053 <span class="comment">% Lactate</span>
+0054 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,0.1932); 
+0055 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0.1749);
+0056 
+0057 
+0058 <span class="keyword">end</span>
+0059</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

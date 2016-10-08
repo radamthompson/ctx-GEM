@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checkRxnStoich</title>
+  <meta name="keywords" content="checkRxnStoich">
+  <meta name="description" content="checkRxnStoich Compares two GEMs by reaction to find differently declared rxns">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>checkRxnStoich
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>checkRxnStoich Compares two GEMs by reaction to find differently declared rxns</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ new_model, link_struc ] = checkRxnStoich( model1, model2, walk_through, print_to_excel, excel_file, excel_sheet ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">checkRxnStoich Compares two GEMs by reaction to find differently declared rxns
+   When troublshooting a GEM structure, it may be convenient to compare
+   the declared stoichiometry of reactions to a template model which is
+   known to work effectively. This script compares two models reaction by
+   reaction (linked via E.C. numbers) then tells you which ones are
+   differently declared as far as reaction stoichiometry is concerned. You
+   have the option to spit all the different reactions to an excel file,
+   walk through them individually and change the reactions with RAVEN.
+
+   model1 := the model you care about editing
+   model2 := the template model
+   walk_through := operator for reaction by reaction walkthrough to edit
+   stoichiometry, 1 is yes, 0 (default) is no
+   print_to_excel := operator for excel output, 1 is yes please print, 0
+   (default) is no
+   excel_file := string of excel filename
+   excel_sheet := string of excel sheet to write to
+
+   new_model := new RAVEN model structure
+   link_struc := MATLAB structure with various fields describing the
+   similarities and differences between the two models
+
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: May 23, 2015
+ Last edit:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="model2modelEC.html" class="code" title="function [ ec_struc ] = model2modelEC( model1,model2, printInfo )">model2modelEC</a>	model2modelEC Map two FBA (GEM) models to each other using E.C. codes</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ new_model, link_struc ] = checkRxnStoich( model1, model2, walk_through, print_to_excel, excel_file, excel_sheet )</a>
+0002 <span class="comment">%checkRxnStoich Compares two GEMs by reaction to find differently declared rxns</span>
+0003 <span class="comment">%   When troublshooting a GEM structure, it may be convenient to compare</span>
+0004 <span class="comment">%   the declared stoichiometry of reactions to a template model which is</span>
+0005 <span class="comment">%   known to work effectively. This script compares two models reaction by</span>
+0006 <span class="comment">%   reaction (linked via E.C. numbers) then tells you which ones are</span>
+0007 <span class="comment">%   differently declared as far as reaction stoichiometry is concerned. You</span>
+0008 <span class="comment">%   have the option to spit all the different reactions to an excel file,</span>
+0009 <span class="comment">%   walk through them individually and change the reactions with RAVEN.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%   model1 := the model you care about editing</span>
+0012 <span class="comment">%   model2 := the template model</span>
+0013 <span class="comment">%   walk_through := operator for reaction by reaction walkthrough to edit</span>
+0014 <span class="comment">%   stoichiometry, 1 is yes, 0 (default) is no</span>
+0015 <span class="comment">%   print_to_excel := operator for excel output, 1 is yes please print, 0</span>
+0016 <span class="comment">%   (default) is no</span>
+0017 <span class="comment">%   excel_file := string of excel filename</span>
+0018 <span class="comment">%   excel_sheet := string of excel sheet to write to</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%   new_model := new RAVEN model structure</span>
+0021 <span class="comment">%   link_struc := MATLAB structure with various fields describing the</span>
+0022 <span class="comment">%   similarities and differences between the two models</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% R. Adam Thompson</span>
+0027 <span class="comment">% Trinh Lab</span>
+0028 <span class="comment">% University of Tennessee, Knoxville</span>
+0029 <span class="comment">% rthomp46@utk.edu</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Created: May 23, 2015</span>
+0032 <span class="comment">% Last edit:</span>
+0033 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0034 
+0035 <span class="comment">% Set up defaults</span>
+0036 <span class="keyword">if</span> nargin &lt; 3
+0037     walk_through = 0;
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span> nargin &lt; 4
+0041     print_to_excel = 0;
+0042 <span class="keyword">end</span>
+0043 
+0044 <span class="keyword">if</span> nargin &lt; 5 &amp;&amp; print_to_excel ~= 0
+0045     input_file = <span class="string">'Give a name for the excel output file: \n'</span>;
+0046     excel_file = input(input_file,<span class="string">'s'</span>);
+0047     excel_sheet = <span class="string">'Sheet1'</span>;
+0048 <span class="keyword">end</span>
+0049 
+0050 
+0051 
+0052 <span class="comment">% Initialize</span>
+0053 rxns1 = model1.rxns;
+0054 rxns2 = model2.rxns;
+0055 new_model = rmfield(model1,{<span class="string">'grRules'</span>,<span class="string">'rxnGeneMat'</span>});
+0056 
+0057 count = 1;
+0058 
+0059 <span class="keyword">if</span> print_to_excel == 1
+0060     headers = {<span class="string">'Model 1 Name'</span>,<span class="string">'Model 1 Rxn'</span>,<span class="string">'Model 2 Rxn'</span>,<span class="string">'Model 2 Name'</span>};
+0061     xlswrite(excel_file,headers,excel_sheet,<span class="string">'A2'</span>);
+0062 <span class="keyword">end</span>
+0063 
+0064 <span class="comment">% Link models</span>
+0065 link_struc = <a href="model2modelEC.html" class="code" title="function [ ec_struc ] = model2modelEC( model1,model2, printInfo )">model2modelEC</a>(model1,model2,0);
+0066 
+0067 idx = find(link_struc.model1_link(:,1));
+0068 mb1 = link_struc.bounds1(idx,1:2);
+0069 mb2 = link_struc.bounds1(idx,3:4);
+0070 rxn1 = rxns1(idx);
+0071 rxn2 = link_struc.model1_link(idx);
+0072 rxn2 = rxns2(rxn2);
+0073 
+0074 <span class="comment">% Begin working loop of linked reactions</span>
+0075 <span class="keyword">for</span> i = 1:length(idx)
+0076     <span class="comment">% Get reaction in each model</span>
+0077     rm1 = idx(i);
+0078     rm2 = link_struc.model1_link(rm1);
+0079     
+0080     <span class="comment">% Get metabolites involved</span>
+0081     [met1,id,val1] = find(model1.S(:,rm1));
+0082     [met2,id,val2] = find(model2.S(:,rm2));
+0083     
+0084     <span class="comment">% Sum substrates and products</span>
+0085     p1 = sum(val1(find(val1&gt;0)));
+0086     p2 = sum(val2(find(val2&gt;0)));
+0087     
+0088     s1 = sum(val1(find(val1&lt;0)));
+0089     s2 = sum(val2(find(val2&lt;0)));
+0090     
+0091     <span class="comment">% Check if reactions are declared differently</span>
+0092     <span class="keyword">if</span> p1 ~= p2 || s1 ~= s2
+0093         
+0094         <span class="comment">% Get reactions as text</span>
+0095         eq1=constructEquations(model1,rm1,false);
+0096         eq2=constructEquations(model2,rm2,false);
+0097         
+0098         <span class="comment">% Print the reactions to excel</span>
+0099         <span class="keyword">if</span> print_to_excel == 1
+0100             rn1 = model1.rxns(rm1);
+0101             rn2 = model2.rxns(rm2);
+0102             xlswrite(excel_file,rn1,excel_sheet,strcat(<span class="string">'A'</span>,num2str(count+2)));
+0103             xlswrite(excel_file,eq1,excel_sheet,strcat(<span class="string">'B'</span>,num2str(count+2)));
+0104             xlswrite(excel_file,eq2, excel_sheet,strcat(<span class="string">'C'</span>,num2str(count+2)));
+0105             xlswrite(excel_file,rn2, excel_sheet,strcat(<span class="string">'D'</span>,num2str(count+2)));
+0106         <span class="keyword">end</span>
+0107         
+0108         <span class="comment">% Go through walk through</span>
+0109         <span class="keyword">if</span> walk_through == 1
+0110             fprintf(<span class="string">'\n%9s%10s%8s%8s\n'</span>,<span class="string">'Model 1: '</span>,cell2mat(rxn1(idx(i))),num2str(mb1(idx(i),1)),num2str(mb1(i,2)))
+0111             fprintf(<span class="string">'%s\n'</span>,cell2mat(eq1))
+0112             fprintf(<span class="string">'\n%9s%10s%8s%8s\n'</span>,<span class="string">'Model 2: '</span>,cell2mat(rxn2(idx(i))),num2str(mb2(idx(i),1)),num2str(mb2(i,2)))
+0113             fprintf(<span class="string">'%s\n\n'</span>,cell2mat(eq2))
+0114             
+0115             chngRxn = <span class="string">'Would you like to change the reaction stoichiometry? (Y/N)   '</span>;
+0116             result = input(chngRxn,<span class="string">'s'</span>);
+0117             <span class="keyword">switch</span> result
+0118                 <span class="keyword">case</span> {<span class="string">'Y'</span>,<span class="string">'y'</span>}
+0119                     <span class="comment">% Request new reaction definition for model 1</span>
+0120                     get_rxn = <span class="string">'Enter new reaction definition for model 1:  '</span>;
+0121                     rxn_eqn = input(get_rxn,<span class="string">'s'</span>);
+0122                     <span class="keyword">try</span>
+0123                         new_model = changeRxns(new_model,rxn1(idx(i)),rxn_eqn,2,<span class="string">'c'</span>,true);
+0124                     <span class="keyword">catch</span>
+0125                         fprintf(<span class="string">'Stopped at i = %i\n'</span>, i)
+0126                         warning(<span class="string">'Error with changeRxns. Ending this script'</span>)
+0127                         <span class="keyword">break</span>
+0128                     <span class="keyword">end</span>
+0129                     
+0130                 <span class="keyword">otherwise</span>
+0131                     fprintf(<span class="string">'Fair enough\n'</span>)
+0132             <span class="keyword">end</span>
+0133             bal = length(idx)-i;
+0134             fprintf(<span class="string">'Only %i reactions left to check \n'</span>,bal)
+0135             
+0136         <span class="keyword">end</span>
+0137         count = count+1;
+0138     <span class="keyword">end</span>
+0139     
+0140     
+0141 <span class="keyword">end</span>
+0142 
+0143 new_model.grRules = model1.grRules;
+0144 new_model.rxnGeneMat = model1.rxnGeneMat;
+0145 
+0146 <span class="keyword">end</span>
+0147 
+0148</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

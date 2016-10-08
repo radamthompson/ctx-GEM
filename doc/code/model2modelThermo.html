@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of model2modelThermo</title>
+  <meta name="keywords" content="model2modelThermo">
+  <meta name="description" content="model2modelThermo Use E.C. code map to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>model2modelThermo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>model2modelThermo Use E.C. code map to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ thermo_struc ] = model2modelThermo( model1, model2, ec_struc ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> model2modelThermo Use E.C. code map to
+   This script was written to work within model2modelEC as a
+   Thermodynamics constraint parser between the two models
+
+   model1, model2 := FBA model, can be from COBRA or RAVEN
+   ec_struc := structure from model2modelEC function
+
+   thermo_struc := MATLAB structure with fields comparing thermodynamic
+   constraints of similar reactions between models
+
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: February 24, 2015
+ Last edit: Feb. 26, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="model2modelEC.html" class="code" title="function [ ec_struc ] = model2modelEC( model1,model2, printInfo )">model2modelEC</a>	model2modelEC Map two FBA (GEM) models to each other using E.C. codes</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ thermo_struc ] = model2modelThermo( model1, model2, ec_struc )</a>
+0002 <span class="comment">% model2modelThermo Use E.C. code map to</span>
+0003 <span class="comment">%   This script was written to work within model2modelEC as a</span>
+0004 <span class="comment">%   Thermodynamics constraint parser between the two models</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   model1, model2 := FBA model, can be from COBRA or RAVEN</span>
+0007 <span class="comment">%   ec_struc := structure from model2modelEC function</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   thermo_struc := MATLAB structure with fields comparing thermodynamic</span>
+0010 <span class="comment">%   constraints of similar reactions between models</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% R. Adam Thompson</span>
+0015 <span class="comment">% Trinh Lab</span>
+0016 <span class="comment">% University of Tennessee, Knoxville</span>
+0017 <span class="comment">% rthomp46@utk.edu</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Created: February 24, 2015</span>
+0020 <span class="comment">% Last edit: Feb. 26, 2015</span>
+0021 
+0022 <span class="comment">% Initialize</span>
+0023 lb1 = model1.lb;
+0024 ub1 = model1.ub;
+0025 
+0026 lb2 = model2.lb;
+0027 ub2 = model2.ub;
+0028 
+0029 link_m1 = ec_struc.model1_link;
+0030 link_m2 = ec_struc.model2_link;
+0031 
+0032 thermo_struc = ec_struc;
+0033 
+0034 m1 = length(lb1);
+0035 m2 = length(lb2);
+0036 
+0037 bounds_m1 = zeros(1,2);
+0038 bounds_m2 = zeros(1,2);
+0039 
+0040 checks1 = zeros(m1,4);
+0041 checks2 = zeros(m2,4);
+0042 
+0043 <span class="comment">% Get bounds</span>
+0044 <span class="keyword">for</span> i=1:length(lb1)
+0045     bounds_m1 = [lb1(i) ub1(i)];
+0046     <span class="keyword">if</span> link_m1(i) ~= 0
+0047         bounds_m2 = [lb2(link_m1(i)) ub2(link_m1(i))];
+0048     <span class="keyword">else</span>
+0049         bounds_m2 = [lb1(i) ub1(i)]; <span class="comment">% Dummy replacement</span>
+0050     <span class="keyword">end</span>
+0051     <span class="comment">% Compare bounds</span>
+0052     <span class="keyword">if</span> ~isequal(bounds_m1,bounds_m2)
+0053         checks2(link_m1(i),:) = [bounds_m2 bounds_m1];
+0054     <span class="keyword">end</span>
+0055 <span class="keyword">end</span>
+0056 
+0057 <span class="keyword">for</span> i=1:length(lb2)
+0058     bounds_m2 = [lb2(i) ub2(i)];
+0059     <span class="keyword">if</span> link_m2(i) ~= 0
+0060         bounds_m1 = [lb1(link_m2(i)) ub1(link_m2(i))];
+0061     <span class="keyword">else</span>
+0062         bounds_m1 = [lb2(i) ub2(i)]; <span class="comment">% Dummy replacement</span>
+0063     <span class="keyword">end</span>
+0064     <span class="comment">% Compare bounds</span>
+0065     <span class="keyword">if</span> ~isequal(bounds_m1,bounds_m2)
+0066         checks1(link_m2(i),:) = [bounds_m1 bounds_m2];
+0067     <span class="keyword">end</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 
+0071 thermo_struc.bounds1 = checks1;
+0072 thermo_struc.bounds2 = checks2;
+0073 
+0074 
+0075 
+0076 <span class="keyword">end</span>
+0077</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

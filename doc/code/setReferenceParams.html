@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setReferenceParams</title>
+  <meta name="keywords" content="setReferenceParams">
+  <meta name="description" content="setReferenceParams Set reference parameters for theoretical / exploratory">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setReferenceParams
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setReferenceParams Set reference parameters for theoretical / exploratory</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setReferenceParams( model, c_source ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setReferenceParams Set reference parameters for theoretical / exploratory
+FBA
+   This is a helper function for any script which is setting reference
+   parameters for exploratory smulations. Prominently used in
+   exploreEnergyBalance(). Sets  ammonia as sole nitrogen source, sulphate as sulphur source.
+
+   c_source = 'CB' %cellobiose
+   c_source = 'CE' %cellulose
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setReferenceParams( model, c_source )</a>
+0002 <span class="comment">%setReferenceParams Set reference parameters for theoretical / exploratory</span>
+0003 <span class="comment">%FBA</span>
+0004 <span class="comment">%   This is a helper function for any script which is setting reference</span>
+0005 <span class="comment">%   parameters for exploratory smulations. Prominently used in</span>
+0006 <span class="comment">%   exploreEnergyBalance(). Sets  ammonia as sole nitrogen source, sulphate as sulphur source.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%   c_source = 'CB' %cellobiose</span>
+0009 <span class="comment">%   c_source = 'CE' %cellulose</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% R. Adam Thompson</span>
+0012 <span class="comment">% Trinh Lab</span>
+0013 <span class="comment">% University of Tennessee, Knoxville</span>
+0014 <span class="comment">% rthomp46@utk.edu</span>
+0015 
+0016 newModel = model;
+0017 
+0018 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,5); <span class="comment">%GluEq</span>
+0019 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,7.5); <span class="comment">%</span>
+0020 
+0021 <span class="comment">% Set up media</span>
+0022 <span class="comment">% Cellohexaose uptake</span>
+0023 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0024 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m97'</span>,0);
+0025 <span class="comment">% Cellopentaose uptake</span>
+0026 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0027 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m98'</span>,0);
+0028 <span class="comment">% Cellotriose uptake</span>
+0029 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0030 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m100'</span>,0);
+0031 
+0032 <span class="keyword">switch</span> c_source
+0033     <span class="keyword">case</span> <span class="string">'CE'</span>
+0034         <span class="comment">% Cellotetraose uptake</span>
+0035         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,1000);
+0036         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0037         <span class="comment">% Cellobiose uptake</span>
+0038         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0039         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0040     <span class="keyword">case</span> <span class="string">'CB'</span>
+0041         <span class="comment">% Cellotetraose uptake</span>
+0042         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0043         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m99'</span>,0);
+0044         <span class="comment">% Cellobiose uptake</span>
+0045         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m20'</span>,1000);
+0046         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m20'</span>,0);
+0047 <span class="keyword">end</span>
+0048 
+0049 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m17'</span>,0); <span class="comment">%Ammonia</span>
+0050 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m17'</span>,1000); <span class="comment">%</span>
+0051 
+0052 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m21'</span>,0); <span class="comment">%Urea</span>
+0053 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m21'</span>,1000); <span class="comment">%</span>
+0054 
+0055 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%H2S</span>
+0056 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m29'</span>,0); <span class="comment">%</span>
+0057 
+0058 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m25'</span>,1000); <span class="comment">%SO4</span>
+0059 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m25'</span>,0);
+0060 
+0061 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m31'</span>,0); <span class="comment">%Ala</span>
+0062 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m32'</span>,0); <span class="comment">%Arg</span>
+0063 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m33'</span>,0); <span class="comment">%Asp</span>
+0064 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m34'</span>,0); <span class="comment">%Asn</span>
+0065 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m35'</span>,-1); <span class="comment">%Cys</span>
+0066 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m36'</span>,0); <span class="comment">%Glu</span>
+0067 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m37'</span>,0); <span class="comment">%Gln</span>
+0068 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m38'</span>,0); <span class="comment">%Gly</span>
+0069 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m39'</span>,0); <span class="comment">%His</span>
+0070 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m40'</span>,0); <span class="comment">%Iso</span>
+0071 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m41'</span>,0); <span class="comment">%Leu</span>
+0072 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m42'</span>,0); <span class="comment">%Lys</span>
+0073 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m43'</span>,0); <span class="comment">%Met</span>
+0074 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m44'</span>,0); <span class="comment">%Phe</span>
+0075 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m45'</span>,0); <span class="comment">%Pro</span>
+0076 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m46'</span>,0); <span class="comment">%Ser</span>
+0077 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m47'</span>,0); <span class="comment">%Thr</span>
+0078 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m48'</span>,0); <span class="comment">%Trp</span>
+0079 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m49'</span>,0); <span class="comment">%Tyr</span>
+0080 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m50'</span>,0); <span class="comment">%Val</span>
+0081 
+0082 <span class="comment">% Fermentation products</span>
+0083 <span class="comment">% Ethanol Production</span>
+0084 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,1000);
+0085 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,0);
+0086 
+0087 <span class="comment">% Acetate</span>
+0088 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,1000);
+0089 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,0);
+0090 
+0091 <span class="comment">% CO2</span>
+0092 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m19'</span>,1000);
+0093 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_BOTH_m19'</span>,0);
+0094 
+0095 <span class="comment">% Hydrogen</span>
+0096 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m55'</span>,1000);
+0097 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m55'</span>,0);
+0098 
+0099 <span class="comment">% Formate</span>
+0100 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,1000);
+0101 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,0);
+0102 
+0103 <span class="comment">% Valine</span>
+0104 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m50'</span>,1000);
+0105 
+0106 <span class="comment">% Ile</span>
+0107 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m40'</span>,1000);
+0108 
+0109 <span class="comment">% Ala</span>
+0110 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_BOTH_m31'</span>,1000);
+0111 
+0112 <span class="comment">% Lactate</span>
+0113 newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,1000);
+0114 newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0);
+0115 
+0116 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

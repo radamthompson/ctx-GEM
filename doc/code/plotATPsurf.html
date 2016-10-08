@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotATPsurf</title>
+  <meta name="keywords" content="plotATPsurf">
+  <meta name="description" content="plotATPsurf Generate 3D plot of ATP requirements">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>plotATPsurf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>plotATPsurf Generate 3D plot of ATP requirements</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ MuSurface ] = plotATPsurf( MuSurface, figName ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">plotATPsurf Generate 3D plot of ATP requirements
+   For plotting without running generate3wayATP.m again
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 6, 2015
+ Last edit: Aug 10, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ MuSurface ] = plotATPsurf( MuSurface, figName )</a>
+0002 <span class="comment">%plotATPsurf Generate 3D plot of ATP requirements</span>
+0003 <span class="comment">%   For plotting without running generate3wayATP.m again</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% R. Adam Thompson</span>
+0007 <span class="comment">% Trinh Lab</span>
+0008 <span class="comment">% University of Tennessee, Knoxville</span>
+0009 <span class="comment">% rthomp46@utk.edu</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Created: Aug 6, 2015</span>
+0012 <span class="comment">% Last edit: Aug 10, 2015</span>
+0013 
+0014 GAMArray = [0:1:50];
+0015 CellArray = [40:1:90];
+0016 
+0017 figure
+0018 surf(CellArray,GAMArray,MuSurface)
+0019 
+0020 ylabel(<span class="string">'GAM ATP Req.'</span>);
+0021 xlabel(<span class="string">'Cellulosome ATP Req.'</span>);
+0022 zlabel(<span class="string">'Specific growth rate \mu (hr^{-1})'</span>);
+0023 ylim([0 50]);
+0024 xlim([40 90]);
+0025 zlim([0 0.5]);
+0026 set(gca,<span class="string">'Ydir'</span>,<span class="string">'reverse'</span>)
+0027 
+0028 set(findall(gcf,<span class="string">'type'</span>,<span class="string">'text'</span>),<span class="string">'fontSize'</span>,16)
+0029 fp = fillPage(gcf, <span class="string">'margins'</span>, [0 0 0 0], <span class="string">'papersize'</span>, [8.5 8.5]);
+0030 
+0031 
+0032 print (gcf,<span class="string">'-dpdf'</span>,<span class="string">'-r300'</span>,figName);
+0033 
+0034 <span class="keyword">end</span>
+0035</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

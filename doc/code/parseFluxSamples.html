@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of parseFluxSamples</title>
+  <meta name="keywords" content="parseFluxSamples">
+  <meta name="description" content="parseFluxSamples Calc stats for cell array of flux samples">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>parseFluxSamples
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>parseFluxSamples Calc stats for cell array of flux samples</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ mean_arr, std_arr, mu_arr ] = parseFluxSamples( soln_cells, remove_loops ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">parseFluxSamples Calc stats for cell array of flux samples
+   This function takes a cell array of flux sampling outputs and returns
+   the mean and std dev of each flux distribution into a set of arrays
+   which can be plotted.
+
+   Works for discreteFBA cell arrays
+
+   soln_cells := cell array of outputs from sampling procedure where each
+   cell component is a model structure with the constraints used in the
+   sampling as well as the warmup points and sample points returned by
+   OptGpSampler
+
+       Optional Inputs:
+   remove_loops := boolean as to if loops need to be removed, default is
+   yes ( remove_loops = 1 )
+
+   mean_arr := array of means for each reaction within network sampled
+   std_arr := array of std devs
+   mu_arr := array of mus used as constraints in the sample for easy
+   plotting
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Mar 15, 2016
+ Last edit:</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="calcSamplingMeans.html" class="code" title="function [means, stds] = calcSamplingMeans(samples)">calcSamplingMeans</a>	calcSamplingMeans Get means and st devs from flux sampling</li><li><a href="parParse.html" class="code" title="function soln_str = parParse(soln_str,excId)">parParse</a>	changeCobraSolver('gurobi5','milp')</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ mean_arr, std_arr, mu_arr ] = parseFluxSamples( soln_cells, remove_loops )</a>
+0002 <span class="comment">%parseFluxSamples Calc stats for cell array of flux samples</span>
+0003 <span class="comment">%   This function takes a cell array of flux sampling outputs and returns</span>
+0004 <span class="comment">%   the mean and std dev of each flux distribution into a set of arrays</span>
+0005 <span class="comment">%   which can be plotted.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   Works for discreteFBA cell arrays</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%   soln_cells := cell array of outputs from sampling procedure where each</span>
+0010 <span class="comment">%   cell component is a model structure with the constraints used in the</span>
+0011 <span class="comment">%   sampling as well as the warmup points and sample points returned by</span>
+0012 <span class="comment">%   OptGpSampler</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%       Optional Inputs:</span>
+0015 <span class="comment">%   remove_loops := boolean as to if loops need to be removed, default is</span>
+0016 <span class="comment">%   yes ( remove_loops = 1 )</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   mean_arr := array of means for each reaction within network sampled</span>
+0019 <span class="comment">%   std_arr := array of std devs</span>
+0020 <span class="comment">%   mu_arr := array of mus used as constraints in the sample for easy</span>
+0021 <span class="comment">%   plotting</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% R. Adam Thompson</span>
+0024 <span class="comment">% Trinh Lab</span>
+0025 <span class="comment">% University of Tennessee, Knoxville</span>
+0026 <span class="comment">% rthomp46@utk.edu</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Created: Mar 15, 2016</span>
+0029 <span class="comment">% Last edit:</span>
+0030 
+0031 s = length(soln_cells);
+0032 <span class="keyword">try</span>
+0033     r = length(soln_cells.c);
+0034 <span class="keyword">catch</span>
+0035     r = length(soln_cells{1,3}.c);
+0036 <span class="keyword">end</span>
+0037 
+0038 mean_arr = zeros(r,s);
+0039 std_arr = zeros(r,s);
+0040 mu_arr = zeros(1,s);
+0041 
+0042 <span class="comment">% Removing Loops</span>
+0043 <span class="keyword">if</span> remove_loops == 1
+0044     excId = [817:1:827,832:1:872];  <span class="comment">%All transport out except CO2 and specific sugars (not Glu Eq)</span>
+0045     
+0046     parfor i = 1:length(soln_cells)
+0047         soln_cells{1,i} = <a href="parParse.html" class="code" title="function soln_str = parParse(soln_str,excId)">parParse</a>(soln_cells{1,i},excId);
+0048         fprintf(<span class="string">'Finished set %i\n'</span>,i)
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="comment">% Calc Stats</span>
+0053 <span class="keyword">for</span> i = 1:s
+0054     <span class="keyword">if</span> isfield(soln_cells{1,i},<span class="string">'newpoints'</span>)
+0055         [means, stds] = <a href="calcSamplingMeans.html" class="code" title="function [means, stds] = calcSamplingMeans(samples)">calcSamplingMeans</a>(soln_cells{1,i}.newpoints);
+0056         mean_arr(:,i) = means;
+0057         std_arr(:,i) = stds;
+0058         mu_arr(i) = means(840);
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 
+0062 <span class="keyword">end</span>
+0063</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

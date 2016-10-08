@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of setExptParam</title>
+  <meta name="keywords" content="setExptParam">
+  <meta name="description" content="setExptParam Master parameter setting function for C. therm. GEM">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html code -->
+<h1>setExptParam
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>setExptParam Master parameter setting function for C. therm. GEM</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ newModel ] = setExptParam( model, c_source, expt ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">setExptParam Master parameter setting function for C. therm. GEM
+   Set parameters for many different experimental conditions in one
+   script. Hard coded to be compatible with v10.12 -
+
+   model := RAVEN model
+   c_source := string, 'cb' for cellobiose, 'ce' for cellulose
+   expt := string, experiment descriptor:
+
+                    For Carbon source 'cb':
+            'wt'              Parent strain parameters, MTC bioreactors
+            'hydG'         HydG parameters, MTC bioreactors
+            'he'              hydG ech parameters, MTC bioreactors
+            'hp'              hydG pta parameters, MTC bioreactors
+
+                    For Carbon source 'ce':
+            'high_1'        High substrate loading experiment, phase 1 (early log)
+            'high_2'        High substrate loading, phase 2 (late log)
+            'low_lc'         5 g/L avicel in LC media (Data from Evert Holwerda)
+            'low_mtc'      5 g/L avicel in MTC media (Data from Evert Holwerda)
+
+
+   newModel := Return with new parameters
+
+
+ R. Adam Thompson
+ Trinh Lab
+ University of Tennessee, Knoxville
+ rthomp46@utk.edu
+
+ Created: Aug 6, 2015
+ Last edit: Sept 22, 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clearFermParams.html" class="code" title="function [ newModel ] = clearFermParams( model )">clearFermParams</a>	clearFermParams Default (1000,0) bounds on ethanol, acetate, etc.</li><li><a href="setCarbonSource.html" class="code" title="function [ newModel ] = setCarbonSource( model, c_source )">setCarbonSource</a>	setCarbonSource Set cellulose or cellobiose for C therm</li><li><a href="setHydGparam.html" class="code" title="function [ newModel ] = setHydGparam( model )">setHydGparam</a>	setHydGparam Take a model and apply HydG constraints</li><li><a href="setHydgEchparam.html" class="code" title="function [ newModel ] = setHydgEchparam( model )">setHydgEchparam</a>	setHydGparam Take a model and apply HydG Ech constraints</li><li><a href="setHydgPtaparam.html" class="code" title="function [ newModel ] = setHydgPtaparam( model )">setHydgPtaparam</a>	setHydGparam Take a model and apply HydG Pta constraints</li><li><a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>	setMedia Define media recipe for C therm for C therm</li><li><a href="setWTparam.html" class="code" title="function [ newModel ] = setWTparam( model )">setWTparam</a>	setWTparam Take a model and apply WT constraints</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="alterCellodextrins.html" class="code" title="function [ newModel, solnMatrix ] = alterCellodextrins( model, expt )">alterCellodextrins</a>	alterCellodextrins Walk through different cellodextrin sources and solveLP</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ newModel ] = setExptParam( model, c_source, expt )</a>
+0002 <span class="comment">%setExptParam Master parameter setting function for C. therm. GEM</span>
+0003 <span class="comment">%   Set parameters for many different experimental conditions in one</span>
+0004 <span class="comment">%   script. Hard coded to be compatible with v10.12 -</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%   model := RAVEN model</span>
+0007 <span class="comment">%   c_source := string, 'cb' for cellobiose, 'ce' for cellulose</span>
+0008 <span class="comment">%   expt := string, experiment descriptor:</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%                    For Carbon source 'cb':</span>
+0011 <span class="comment">%            'wt'              Parent strain parameters, MTC bioreactors</span>
+0012 <span class="comment">%            'hydG'         HydG parameters, MTC bioreactors</span>
+0013 <span class="comment">%            'he'              hydG ech parameters, MTC bioreactors</span>
+0014 <span class="comment">%            'hp'              hydG pta parameters, MTC bioreactors</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%                    For Carbon source 'ce':</span>
+0017 <span class="comment">%            'high_1'        High substrate loading experiment, phase 1 (early log)</span>
+0018 <span class="comment">%            'high_2'        High substrate loading, phase 2 (late log)</span>
+0019 <span class="comment">%            'low_lc'         5 g/L avicel in LC media (Data from Evert Holwerda)</span>
+0020 <span class="comment">%            'low_mtc'      5 g/L avicel in MTC media (Data from Evert Holwerda)</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   newModel := Return with new parameters</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% R. Adam Thompson</span>
+0027 <span class="comment">% Trinh Lab</span>
+0028 <span class="comment">% University of Tennessee, Knoxville</span>
+0029 <span class="comment">% rthomp46@utk.edu</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Created: Aug 6, 2015</span>
+0032 <span class="comment">% Last edit: Sept 22, 2015</span>
+0033 
+0034 newModel = <a href="clearFermParams.html" class="code" title="function [ newModel ] = clearFermParams( model )">clearFermParams</a>(model);
+0035 
+0036 newModel = <a href="setCarbonSource.html" class="code" title="function [ newModel ] = setCarbonSource( model, c_source )">setCarbonSource</a>(newModel, c_source);
+0037 
+0038 <span class="keyword">switch</span> expt
+0039     <span class="keyword">case</span> <span class="string">'wt'</span>
+0040         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'mtc'</span>);
+0041         newModel = <a href="setWTparam.html" class="code" title="function [ newModel ] = setWTparam( model )">setWTparam</a>(newModel);
+0042 
+0043     <span class="keyword">case</span> <span class="string">'hydG'</span>
+0044         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'mtc'</span>);
+0045         newModel = <a href="setHydGparam.html" class="code" title="function [ newModel ] = setHydGparam( model )">setHydGparam</a>(newModel);
+0046     
+0047     <span class="keyword">case</span> <span class="string">'he'</span>
+0048         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'mtc'</span>);
+0049         newModel = <a href="setHydgEchparam.html" class="code" title="function [ newModel ] = setHydgEchparam( model )">setHydgEchparam</a>(newModel);
+0050     
+0051     <span class="keyword">case</span> <span class="string">'hp'</span>
+0052         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'mtc'</span>);
+0053         newModel = <a href="setHydgPtaparam.html" class="code" title="function [ newModel ] = setHydgPtaparam( model )">setHydgPtaparam</a>(newModel);
+0054     
+0055     <span class="keyword">case</span> <span class="string">'low_mtc'</span>
+0056         
+0057         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'mtc'</span>);
+0058         
+0059         <span class="comment">% Data recieved from Evert Holwerda, Dartmouth University</span>
+0060         <span class="comment">% Glucose equivalents uptake</span>
+0061         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,6.47);
+0062         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,6.31);
+0063         
+0064         <span class="comment">%Putting a cap on urea/ammonia uptake with units of mM N/ gDCW/ hr</span>
+0065         <span class="comment">% **Nitrogen upper bound set using high substrate loading paper</span>
+0066         <span class="comment">% (Holwerda et al 2014)</span>
+0067 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m17',0.69986); %NH3</span>
+0068 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m21',1.3997);  % Urea</span>
+0069         
+0070         <span class="comment">% Ethanol Production</span>
+0071         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,2.66);
+0072         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,2.60);
+0073         
+0074         <span class="comment">% Acetate</span>
+0075         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,3.55);
+0076         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,3.25);
+0077         
+0078         <span class="comment">% Formate</span>
+0079         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,1.39);
+0080         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,1.38);
+0081         
+0082         <span class="comment">% Lactate</span>
+0083         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,0.0);
+0084         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0.0);
+0085         
+0086     <span class="keyword">case</span> <span class="string">'low_lc'</span>
+0087         
+0088         newModel = <a href="setMedia.html" class="code" title="function [ newModel ] = setMedia( model, recipe )">setMedia</a>(newModel,<span class="string">'lc'</span>);
+0089         
+0090         <span class="comment">% Data recieved from Evert Holwerda, Dartmouth University</span>
+0091         <span class="comment">% Glucose equivalents uptake</span>
+0092         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_IN_m101'</span>,6.99);
+0093         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_IN_m101'</span>,6.81);
+0094         
+0095         <span class="comment">%Putting a cap on urea/ammonia uptake with units of mM N/ gDCW/ hr</span>
+0096         <span class="comment">% **Nitrogen upper bound set using high substrate loading paper</span>
+0097         <span class="comment">% (Holwerda et al 2014)</span>
+0098 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m17',0.69986); %NH3</span>
+0099 <span class="comment">%         newModel=setParam(newModel,'ub','EXC_IN_m21',1.3997);  % Urea</span>
+0100         
+0101         <span class="comment">% Ethanol Production</span>
+0102         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m51'</span>,2.32);
+0103         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m51'</span>,2.30);
+0104         
+0105         <span class="comment">% Acetate</span>
+0106         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m52'</span>,5.09);
+0107         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m52'</span>,4.72);
+0108         
+0109         <span class="comment">% Formate</span>
+0110         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m53'</span>,2.13);
+0111         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m53'</span>,2.04);
+0112         
+0113         <span class="comment">% Lactate</span>
+0114         newModel=setParam(newModel,<span class="string">'ub'</span>,<span class="string">'EXC_OUT_m54'</span>,0.0);
+0115         newModel=setParam(newModel,<span class="string">'lb'</span>,<span class="string">'EXC_OUT_m54'</span>,0.0);
+0116         
+0117 <span class="keyword">end</span>
+0118 
+0119 <span class="keyword">end</span>
+0120</pre></div>
+<hr><address>Generated on Sat 08-Oct-2016 13:49:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
